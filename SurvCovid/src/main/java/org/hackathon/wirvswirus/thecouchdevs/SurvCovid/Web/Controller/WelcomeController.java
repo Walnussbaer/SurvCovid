@@ -8,12 +8,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class WelcomeController {
 	
-	@GetMapping("/welcome")
-	public String welcome(@RequestParam(name="name", required =true,defaultValue="World") String name, Model model) {
+	@GetMapping("/index")
+	public String welcome(@RequestParam(name="name", required =false,defaultValue="World") String name, Model model) {
 		
-		model.addAttribute("name",name);
-		return "welcome";
-		
+		return "Hello User";
 		
 	}
 
