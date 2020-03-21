@@ -1,11 +1,12 @@
 package org.hackathon.wirvswirus.thecouchdevs.SurvCovid;
 
-import java.util.Arrays;
+import java.util.stream.Stream;
 
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.User;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service.UserService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
@@ -15,15 +16,16 @@ public class SurvCovidApplication {
 		SpringApplication.run(SurvCovidApplication.class, args);
 	}
 	
-	@Bean CommandLineRunner commandLineRunner(ApplicationContext ctx) {
+	@Bean CommandLineRunner createUsers(UserService userService) {
 		return args -> {
-			System.out.println("Lets inspect the beans provided by Spring Boot:");
-			String[] beanNames = ctx.getBeanDefinitionNames();
-			Arrays.sort(beanNames);
-			for (String beanName: beanNames) {
-				System.out.println(beanName);
-			}
+			Stream.of("John","Peter","Max","Volker","Paul","Sharmin","Vroni","Philipp","Gino","Henning").forEach(name -> {
+				User user = new User(name);
+				userService.saveUser(user);
+			});
+			System.out.println("Created test users");
+			userService.getAllUsers().forEach(user -> {
+				System.out.println(user.getUserName());
+			});
 		};
 	}
-
 }
