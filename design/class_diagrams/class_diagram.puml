@@ -1,0 +1,71 @@
+@startuml
+class User {
+  .. Simple Getter ..
+  + register()
+  + getAddress()
+  .. Some setter ..
+  + setName()
+   private data 
+  int age
+  int id
+  int number
+  int points
+  public data 
+  string name
+
+}
+
+class EventManager {
++ sendEvent()
+}
+
+class GameEvent {
+GameEventDefinition  def
+time time
+id receiver
+}
+
+class GameEventDefinition {
+public data 
+  string name
+}
+
+
+class GameEventChoice {
+public data 
+  string name
+  string impact
+}
+
+
+class GameEventChoiceRepository {
++getChoices(def GameEventDefinition )
+
+}
+
+class GameEventImpactRepository {
++getImpact(def GameEventChoice )
+
+}
+
+class GameEventImpact {
+  int points
+  int infected
+  string text
+  def GameEventDefinition
+  +triggerImpact(user)
+}
+
+class GameManager {
++showMessage(string msg)
+}
+
+class API{
+
+}
+
+GameEventDefinition -- GameEventImpact
+GameEventChoice -- GameEventImpact
+
+GameEventDefinition o-- GameEventChoice : aggregation
+@enduml
