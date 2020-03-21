@@ -1,4 +1,4 @@
-package org.hackathon.wirvswirus.thecouchdevs.SurvCovid.Web.Controller;
+package org.hackathon.wirvswirus.thecouchdevs.SurvCovid.web.controller;
 
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
