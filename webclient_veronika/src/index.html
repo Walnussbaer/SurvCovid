@@ -12,9 +12,14 @@
   <script src="https://kit.fontawesome.com/1799bfffe4.js" crossorigin="anonymous"></script>
   <script type="text/javascript">
     $(function () {
-      $('[data-toggle="tooltip"]').tooltip()
+      $('[data-toggle="tooltip"]').tooltip();
+      function stop(timer) {
+        clearInterval(timer);
+      }
+      $('#typer').typer([$('#typer').attr('data-text')], {afterAll: stop});
     });
   </script>
+  <script src="/assets/js/jquery.typer.js"></script>
 </head>
 <body>
   <app-root></app-root>

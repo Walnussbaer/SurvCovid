@@ -1,1 +1,8 @@
-/* You can add global styles to this file, and also import other style files */
+body {
+  background-image: url('/assets/img/background.gif');
+  background-size: cover;
+}
+
+#typer {
+  font-family: monospace;
+}
