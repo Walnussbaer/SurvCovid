@@ -1,3 +1,18 @@
-<h3>{{ pageTitle }}</h3>
+<!--<div>
+    <h3>{{ pageTitle }}</h3>
+<p id="typer" data-text="Tag 0: In einem fernen Land häufen sich die Meldungen von mysteriösen Todesfällen. Es kursiert das Gerücht, dass ein neuartiges Virus die Menschen befällt. Die Versuche der Regierung, jegliche Meldungen darüber zu zensieren, sind fehlgeschlagen. Hello Player
+    in this situation do you want to solve the mistry and go ahead ??"></p> 
+</div> -->
 
-<p id="typer" data-text="Tag 0: In einem fernen Land häufen sich die Meldungen von mysteriösen Todesfällen. Es kursiert das Gerücht, dass ein neuartiges Virus die Menschen befällt. Die Versuche der Regierung, jegliche Meldungen darüber zu zensieren, sind fehlgeschlagen."></p>
+<div>
+    <h3>{{ pageTitle }}</h3>
+    <div class="alert alert-info" [hidden]="submitted">Hello Player ! Welcome to SurvCovid.</div>
+  <form (ngSubmit)="onSubmit()" #welcomeForm="ngForm">
+    <div class="form-group">
+    <!--this place is for adding any other input control-->
+     <!-- <input type="text" class="form-control" id="name" name="name" [(ngModel)]="currentPlayer.name" required>--> 
+    </div>
+    <button type="submit" class="btn btn-success" [disabled]="!welcomeForm.form.valid">Start</button>
+
+  </form>
+</div>

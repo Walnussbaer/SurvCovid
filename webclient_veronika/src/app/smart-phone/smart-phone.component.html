@@ -1,0 +1,12 @@
+<div class="phone">
+        <div class="phone-content text-success">
+          <div class="status">
+            <activity-progress></activity-progress>
+          </div>
+          <router-outlet></router-outlet>
+          <!--welcome component will be loaded in the router-outlet as per
+          the specification of path in the app.module.ts -->
+          <!--<welcome></welcome>-->
+          <button (click)="onMenuButtonClick($event)">this is menu button</button>
+        </div>
+      </div>

@@ -1,4 +1,4 @@
-/*.phone {
+.phone {
   background-image:url('/assets/img/iphone-160307_1280.png');
   background-repeat: no-repeat;
   background-position: top center;
@@ -40,4 +40,4 @@
   .status {
     font-size:0.7em;
   }
-}*/
+}
