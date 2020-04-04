@@ -13,9 +13,8 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>SurvCovid</name>
 	<description>Project for the Hackathon of the german government (Bundesregierung) against the Covid-19 virus</description>
-
 	<properties>
-		<java.version>13</java.version>
+		<java.version>11</java.version>
 	</properties>
 
 	<dependencies>

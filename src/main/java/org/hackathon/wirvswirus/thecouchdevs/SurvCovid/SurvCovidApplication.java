@@ -16,7 +16,7 @@ public class SurvCovidApplication {
 		SpringApplication.run(SurvCovidApplication.class, args);
 	}
 	
-	@Bean CommandLineRunner createUsers(UserService userService) {
+	@Bean CommandLineRunner createTestData(UserService userService) {
 		return args -> {
 			Stream.of("John","Peter","Max","Volker","Paul","Sharmin","Vroni","Philipp","Gino","Henning").forEach(name -> {
 				User user = new User(name);
