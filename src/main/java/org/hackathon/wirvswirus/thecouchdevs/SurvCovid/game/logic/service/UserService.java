@@ -35,6 +35,7 @@ public class UserService {
 		
 		List<User> users = (List<User>) this.userRepository.findAll();
 		return users;
+
 	}
 
 }
