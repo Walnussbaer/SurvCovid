@@ -1,0 +1,2 @@
+GameEventChoice und GameEventDefinition: combined Primary Key for a GameEventImpact
+-->Realtionship table with 3 columns: GameEventChoice (PK, FK), GameEventDefinitino (PK,FK), GameEventImpact (FK)
