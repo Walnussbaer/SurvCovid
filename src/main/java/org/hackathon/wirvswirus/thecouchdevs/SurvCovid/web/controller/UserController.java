@@ -17,23 +17,23 @@ public class UserController {
 	
 	@GetMapping("/users")
 	public List<User> sendUsers(){
-		
+
 		return userService.getAllUsers();
-		
+
 	}
-	
+
 	@GetMapping("/register")
 	public String viewRegistrationPage() {
 		return "On this page, you can register yourself to the game!";
 	}
-	
+
 	@PostMapping("/register")
 	public String register(@RequestParam(name="userName", required=true)String userName) {
-		
+
 		User user = new User(userName);
-		
+
 		return user.getUserId();
-		
+
 	}
 
 }

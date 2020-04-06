@@ -1,11 +1,6 @@
 package org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name="USER")
@@ -20,6 +15,11 @@ public class User {
 	
 	@Column(name="USER_NAME")
 	private String userName;
+
+	//@OneToOne
+	//@JoinColumn(name = "INVENTORY")
+	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+	private Inventory inventory;
 	
 	public User() {}
 	
@@ -27,6 +27,11 @@ public class User {
 		this.userName = userName;
 		// TODO: write a random string generator
 		this.userId = userName + "_" + userNumber;
+		this.inventory = new Inventory(this);
+	}
+
+	public String getUserId() {
+		return this.userId;
 	}
 
 	public String getUserName() {
@@ -36,10 +41,9 @@ public class User {
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
-	
-	public String getUserId() {
-		return this.userId;
+
+	public Inventory getInventory() {
+		return this.inventory;
 	}
-	
 
 }
