@@ -23,6 +23,15 @@
   padding-bottom:30px;
 }
 
+.home-button {
+  position:absolute;
+  bottom:20px;
+  left:245px;
+  height:80px;
+  width:80px;
+  cursor: pointer;
+}
+
 @media (max-width:450px)
 {
   .phone {
@@ -39,5 +48,12 @@
 
   .status {
     font-size:0.7em;
+  }
+
+  .home-button {
+    bottom:15px;
+    left:150px;
+    height:60px;
+    width:60px;
   }
 }
