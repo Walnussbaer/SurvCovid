@@ -1,6 +1,6 @@
 package org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service;
 
-import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.Item;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.ItemType;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.repository.ItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -8,33 +8,33 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class ItemService {
+public class ItemTypeService {
 
 	@Autowired
 	private ItemRepository itemRepository;
 
 	@Autowired
-	public ItemService(ItemRepository itemRepository) {
+	public ItemTypeService(ItemRepository itemRepository) {
 		if (itemRepository == null) {
 			throw new NullPointerException("itemRepository cannot be null");
 		}
 		this.itemRepository = itemRepository;
 	}
 	
-	public Item addItem(Item item) {
+	public ItemType addItem(ItemType itemType) {
 		
-		if (item == null) {
+		if (itemType == null) {
 			throw new NullPointerException("item cannot be null");
 		}
-		this.itemRepository.save(item);
+		this.itemRepository.save(itemType);
 		
-		return item;
+		return itemType;
 	}
 	
-	public List<Item> getAllItems(){
+	public List<ItemType> getAllItemTypes(){
 		
-		List<Item> items = (List<Item>) this.itemRepository.findAll();
-		return items;
+		List<ItemType> itemTypes = (List<ItemType>) this.itemRepository.findAll();
+		return itemTypes;
 	}
 
 }

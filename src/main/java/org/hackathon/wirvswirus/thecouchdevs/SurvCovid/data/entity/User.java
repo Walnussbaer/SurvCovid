@@ -16,10 +16,8 @@ public class User {
 	@Column(name="USER_NAME")
 	private String userName;
 
-	//@OneToOne
-	//@JoinColumn(name = "INVENTORY")
-	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-	private Inventory inventory;
+//	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+//	private InventoryItem inventoryItem;
 	
 	public User() {}
 	
@@ -27,7 +25,10 @@ public class User {
 		this.userName = userName;
 		// TODO: write a random string generator
 		this.userId = userName + "_" + userNumber;
-		this.inventory = new Inventory(this);
+	}
+
+	public long getUserNumber() {
+		return this.userNumber;
 	}
 
 	public String getUserId() {
@@ -42,8 +43,9 @@ public class User {
 		this.userName = userName;
 	}
 
-	public Inventory getInventory() {
-		return this.inventory;
-	}
+	// TODO: Implement with new structure
+//	public InventoryItem getInventoryItem() {
+//		return this.inventoryItem;
+//	}
 
 }

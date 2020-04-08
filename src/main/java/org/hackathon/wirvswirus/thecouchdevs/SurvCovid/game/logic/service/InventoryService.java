@@ -1,17 +1,13 @@
 package org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service;
 
-import java.util.List;
-
-import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.AppConfig;
-import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.SurvCovidApplication;
-import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.Inventory;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.InventoryItem;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.ItemType;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.User;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.repository.InventoryRepository;
-import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class InventoryService {
@@ -20,28 +16,47 @@ public class InventoryService {
     private InventoryRepository inventoryRepository;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     public InventoryService(InventoryRepository inventoryRepository) {
         if (inventoryRepository == null)
             throw new NullPointerException("inventoryRepository cannot be null");
         this.inventoryRepository = inventoryRepository;
     }
 
-    public Inventory getInventory(String userName) {
-        //ApplicationContext appContext = SurvCovidApplication.getApplicationContext();
-        ApplicationContext appContext = new AnnotationConfigApplicationContext(AppConfig.class);
+    public List<InventoryItem> getInventory(User user) {
+        return this.inventoryRepository.findByUser(user);
+    }
 
-        UserService userService = appContext.getBean("userService", UserService.class);
+    public List<InventoryItem> getInventory(String userName) {
         User user = userService.getUserByName(userName);
-        return user.getInventory();
+        return this.getInventory(user);
     }
 
-    public Inventory saveInventory(Inventory inventory) {
+    public void addItem(User user, ItemType itemType) {
+        this.addItemCount(user, itemType, 1);
+    }
 
-        if (inventory == null) {
+    public void addItemCount(User user, ItemType itemType, int itemCount) {
+        // If the user already has some items of this type, we fetch them
+        InventoryItem inventoryItem = this.inventoryRepository.findInventoryItemByUserAndItemType(user, itemType);
+
+        // If the user does not have any items of this type yet, we initialize the entry
+        if(inventoryItem == null)
+            inventoryItem = new InventoryItem(user, itemType, 0);
+
+        // We add the new items to the existing ones
+        inventoryItem.addItemCount(itemCount);
+
+        // We save the update to the database
+        this.inventoryRepository.save(inventoryItem);
+    }
+
+    public InventoryItem saveInventoryItem(InventoryItem inventoryItem) {
+        if (inventoryItem == null)
             throw new NullPointerException("inventory cannot be null");
-        }
-        return this.inventoryRepository.save(inventory);
+        return this.inventoryRepository.save(inventoryItem);
     }
-
 
 }
