@@ -1,6 +1,7 @@
 package org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.User;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.repository.UserRepository;
@@ -33,9 +34,40 @@ public class UserService {
 	
 	public List<User> getAllUsers(){
 		
-		List<User> users = (List<User>) this.userRepository.findAll();
+		List<User> users = (List<User>) this.userRepository.findAll(); 
 		return users;
-
+	}
+	
+	public Optional<User> getUserByNumber(long id) {
+		
+		Optional<User> user = this.userRepository.findById(id);
+		if( user.isEmpty()) {
+			throw new NullPointerException("user_id does not exist");			
+		}		
+		
+		return user;		
+	}
+	
+	public void changeUserNameByNumber(Long id, String userName) {
+			
+		this.userRepository.findById(id)
+		.map(user -> {
+			user.setUserName(userName);
+			return this.userRepository.save(user);
+			
+		});		
+		
+	}
+	
+	
+	public void deleteUserByNumber(Long id){
+		
+		Optional<User> user = this.userRepository.findById(id);
+		if( user.isEmpty()) {
+			throw new NullPointerException("user_id does not exist");			
+		}
+				
+		this.userRepository.deleteById(id);		
 	}
 
 }
