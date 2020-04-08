@@ -6,7 +6,11 @@ import java.util.*;
 @Entity(name = "Inventory")
 @Table(name="INVENTORY")
 public class InventoryItem {
+	/** Inventory item slot which holds an unlimited amount of one item for one user.
+	 *
+	 */
 
+	// Combined Primary Key (UserId & ItemTypeID)
 	@EmbeddedId
 	private InventoryItemId id;
 

@@ -7,6 +7,11 @@ import java.util.Objects;
 
 @Embeddable
 public class InventoryItemId implements Serializable {
+    /** Combined Primary Key for InventoryItem table
+     *  Elements:
+     *    userId
+     *    itemTypeId
+     */
     @Column(name = "USER_ID")
     private Long userId;
 
