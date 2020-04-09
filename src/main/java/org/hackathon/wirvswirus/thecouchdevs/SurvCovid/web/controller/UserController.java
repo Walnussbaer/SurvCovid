@@ -41,7 +41,7 @@ public class UserController {
 		
 		User user = new User(userName);		
 		
-		return user.getUserId();		
+		return Long.toString(user.getUserNumber());		
 	}
 	
 	@PostMapping("/delete")

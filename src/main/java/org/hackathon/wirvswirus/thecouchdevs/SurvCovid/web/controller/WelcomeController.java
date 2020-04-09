@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class WelcomeController {
 	
-	@GetMapping("/index")
+	@GetMapping("/")
 	public String welcome(@RequestParam(name="name", required =false,defaultValue="World") String name, Model model) {
 		
 		return "Hello User";

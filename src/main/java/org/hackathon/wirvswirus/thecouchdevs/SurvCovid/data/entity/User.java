@@ -13,10 +13,13 @@ import javax.persistence.Table;
 @Table(name="USER")
 public class User {
 	
+    /*
 	@Column(name="USER_ID")
 	private String userId;
+	*/
 	
 	@Id
+	@Column(name="USER_NUMBER")
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private long userNumber;
 	
@@ -29,8 +32,8 @@ public class User {
 	//Constructor using userName
 	public User(String userName) {
 		this.userName = userName;
-		this.userNumber = generateUserId(1000,9999);
-		this.userId = this.userName + "_" + this.userNumber;
+		//this.userNumber = generateUserId(1000,9999);
+		//this.userId = this.userName + "_" + this.userNumber;
 	}
 
 	//Get-Methods
@@ -38,9 +41,11 @@ public class User {
 		return this.userName;
 	}
 	
+	/*
 	public String getUserId() {
 		return this.userId;
 	}
+	*/
 	
 	public long getUserNumber() {
 		return this.userNumber;
@@ -50,7 +55,7 @@ public class User {
 
 	public void setUserName(String userName) {
 		this.userName = userName;
-		this.userId =  userName + "_" + this.userNumber;
+		//this.userId =  userName + "_" + this.userNumber;
 	}
 	
 	/*	
@@ -70,11 +75,5 @@ public class User {
 		 var userId = random.ints(min,(max+1)).findFirst().getAsInt();		 
 		 return userId;
 	 }
-	 
-	 
-	
-	
-	
-	
 
 }

@@ -59,7 +59,6 @@ public class UserService {
 		
 	}
 	
-	
 	public void deleteUserByNumber(Long id){
 		
 		Optional<User> user = this.userRepository.findById(id);

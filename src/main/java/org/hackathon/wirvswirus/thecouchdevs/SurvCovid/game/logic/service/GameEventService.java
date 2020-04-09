@@ -1,5 +1,8 @@
 package org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.GameEvent;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.User;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.repository.GameEventRepository;
@@ -20,12 +23,16 @@ public class GameEventService {
 		this.gameEventRepository = gameEventRepository;
 	}
 	
+	public GameEventService() {
+	    
+	}
+	
 	public GameEvent saveGameEvent(GameEvent gameEvent) {
 		
 		if (gameEvent == null) {
 			throw new NullPointerException("gameEvent cannot be null");
 		}
-		this.gameEventRepository.save(gameEvent);
+		gameEvent = this.gameEventRepository.save(gameEvent);
 		
 		return gameEvent;
 	}
@@ -33,7 +40,7 @@ public class GameEventService {
 	public GameEvent findNextGameEventForUser(User player) {
 	    
 	    GameEvent nextGameEvent = null;
-	    
+	     
 	    if (player == null) {
 	        throw new NullPointerException("player cannot be null");
 	    }
@@ -41,9 +48,7 @@ public class GameEventService {
 	    nextGameEvent = this.gameEventRepository.findByIsDoneAndPlayer(false,player);
 	    
 	    return nextGameEvent;
-	    
-	    
+	        
 	}
 	
-
 }

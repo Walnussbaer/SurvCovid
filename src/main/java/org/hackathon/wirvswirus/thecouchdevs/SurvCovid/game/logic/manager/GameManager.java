@@ -1,24 +1,31 @@
 package org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.manager;
 
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.manager.submanager.GameEventManager;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
- * Singleton which handles all game logic related decisions. 
+ * This class handles all game related logic, e.g. pushing events to the players. 
+ * 
+ * The game manager uses several nested objects (such as a GameEventManger) to achieve its task. 
+ * 
+ * It is basically a coordinator of all the submanagers. 
+ * 
  * @author volke
  *
  */
+@Component
 public class GameManager {
     
-    private static GameManager instance = new GameManager();
-    private final GameEventManager gameEventManager = new GameEventManager();
-
+    private GameEventManager gameEventManager;
     
-    private GameManager() {
+    public GameManager() {
         
     }
     
-    public static GameManager getInstance() {
-        return instance;
+    @Autowired
+    public GameManager(GameEventManager gameEventManager) {
+        this.gameEventManager = gameEventManager;
     }
     
     public void sayHello() {
