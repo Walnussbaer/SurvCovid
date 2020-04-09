@@ -10,8 +10,9 @@ public class WelcomeController {
 	
 	@GetMapping("/")
 	public String welcome(@RequestParam(name="name", required =false,defaultValue="World") String name, Model model) {
+	    
 		
-		return "Hello User";
+		return "Hello SurvCovid player";
 		
 	}
 
