@@ -1,7 +1,9 @@
 package org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.manager;
 
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.manager.submanager.GameEventManager;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.manager.submanager.ServiceManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 /**
@@ -17,8 +19,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class GameManager {
     
+    @Autowired
     private GameEventManager gameEventManager;
-    
+        
     public GameManager() {
         
     }
@@ -36,6 +39,4 @@ public class GameManager {
         return this.gameEventManager;
     }
     
-    
-
 }

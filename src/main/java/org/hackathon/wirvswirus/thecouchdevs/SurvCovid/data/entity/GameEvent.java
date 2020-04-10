@@ -14,6 +14,7 @@ import javax.persistence.Table;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name="GAME_EVENT")
@@ -24,9 +25,17 @@ public class GameEvent {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private long id;
 	
-	@Column(name="TIMESTAMP")
+	@Column(name="CREATION_TIME")
 	@DateTimeFormat(pattern="dd.MM.yyyy")
-	LocalDateTime time;
+	LocalDateTime serverCreationTime;
+	
+	@Column(name="CLIENT_RECEIVED_TIME")
+	@DateTimeFormat(pattern="dd.MM.yyyy")
+	LocalDateTime clientReceivedTime;
+	
+	@ManyToOne
+	@JoinColumn(name="CHOSEN_CHOICE")
+	GameEventChoice chosenChoice;
 	
 	@ManyToOne
 	@JoinColumn(name="PLAYER")
@@ -35,7 +44,7 @@ public class GameEvent {
 	
 	@ManyToOne
 	@JoinColumn(name = "GAME_EVENT_DEFINITION_ID")
-	@JsonBackReference
+	@JsonManagedReference
 	private GameEventDefinition gameEventDefinition; 
 	
 	@Column(name="IS_DONE")
@@ -47,7 +56,7 @@ public class GameEvent {
 	
 	public GameEvent(LocalDateTime time, User player, GameEventDefinition gameEventDefinition, boolean isDone){
         
-        this.time = time;
+        this.serverCreationTime = time;
         this.player = player;
         this.gameEventDefinition = gameEventDefinition;
         this.isDone = isDone;
@@ -60,14 +69,6 @@ public class GameEvent {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public LocalDateTime getTime() {
-        return time;
-    }
-
-    public void setTime(LocalDateTime time) {
-        this.time = time;
     }
 
     public User getPlayer() {
@@ -93,6 +94,31 @@ public class GameEvent {
     public void setDone(boolean isDone) {
         this.isDone = isDone;
     }
+
+    public LocalDateTime getServerCreationTime() {
+        return serverCreationTime;
+    }
+
+    public void setServerCreationTime(LocalDateTime serverCreationTime) {
+        this.serverCreationTime = serverCreationTime;
+    }
+
+    public LocalDateTime getClientReceivedTime() {
+        return clientReceivedTime;
+    }
+
+    public void setClientReceivedTime(LocalDateTime clientReceivedTime) {
+        this.clientReceivedTime = clientReceivedTime;
+    }
+    
+    public GameEventChoice getChosenChoice() {
+        return chosenChoice;
+    }
+
+    public void setChosenChoice(GameEventChoice chosenChoice) {
+        this.chosenChoice = chosenChoice;
+    }
+    
 	
 	
 	

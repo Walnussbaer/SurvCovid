@@ -51,4 +51,17 @@ public class GameEventService {
 	        
 	}
 	
+	public GameEvent getGameEventById(long gameEventId) {
+	    
+	    
+	    Optional<GameEvent> gameEvent = this.gameEventRepository.findById(gameEventId);
+	    
+	    if (gameEvent.isEmpty()) {
+	        return null;
+	    }
+	    
+	    return gameEvent.get();
+	    
+	}
+	
 }
