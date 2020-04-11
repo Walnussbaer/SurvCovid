@@ -43,10 +43,10 @@ public class UserController {
 	
 	@DeleteMapping("/user")
 	public void deleteUser(@RequestParam(name="userNumber", required=true)long userNumber) {	
-		userService.deleteUserByNumber(userNumber);			
+		userService.deleteUserById(userNumber);			
 	}
 	
-	@PutMapping("/modify")
+	@PutMapping("/user")
 	public void modifyUserName(@RequestParam(name="userNumber", required=true)long userNumber,
 			@RequestParam(name="userName", required=true)String userName) {
 		userService.changeUserNameById(userNumber, userName);

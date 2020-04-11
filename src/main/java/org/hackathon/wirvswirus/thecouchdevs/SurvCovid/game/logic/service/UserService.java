@@ -48,7 +48,7 @@ public class UserService {
 		return user;		
 	}
 	
-	public void changeUserNameById(Long id, String userName) {
+	public void changeUserNameById(long id, String userName) {
 			
 		this.userRepository.findById(id)
 		.map(user -> {
@@ -59,7 +59,7 @@ public class UserService {
 		
 	}
 	
-	public void deleteUserByNumber(Long id){
+	public void deleteUserById(long id){
 		
 		Optional<User> user = this.userRepository.findById(id);
 		if( user.isEmpty()) {
