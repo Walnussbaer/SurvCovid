@@ -28,7 +28,7 @@ public class UserController {
 	@GetMapping("/user")
 	public Optional<User> sendUser(@RequestParam(name="userNumber", required=true)long userNumber){		
 		
-		Optional<User> user = userService.getUserByNumber(userNumber);		
+		Optional<User> user = userService.getUserById(userNumber);		
 		
 		return user;		
 	}
@@ -38,7 +38,7 @@ public class UserController {
 		
 		User user = new User(userName);		
 		
-		return Long.toString(user.getUserNumber());		
+		return Long.toString(user.getUserId());		
 	}
 	
 	@DeleteMapping("/user")
@@ -49,7 +49,7 @@ public class UserController {
 	@PutMapping("/modify")
 	public void modifyUserName(@RequestParam(name="userNumber", required=true)long userNumber,
 			@RequestParam(name="userName", required=true)String userName) {
-		userService.changeUserNameByNumber(userNumber, userName);
+		userService.changeUserNameById(userNumber, userName);
 		//this.sendUser(userNumber);
 				
 	}

@@ -36,7 +36,7 @@ public class GameEventController {
     GameEventChoiceService gameEventChoiceService;
     
 	@GetMapping(BASE_PATH + "next")
-	public GameEvent getNextGameEvent(@RequestParam(name="user_number", required=true)long userNumber) {
+	public GameEvent getNextGameEvent(@RequestParam(name="user_id", required=true)long userId) {
 	    
 	    
 	    gameEventManager = gameManager.getGameEventManager();
@@ -50,7 +50,7 @@ public class GameEventController {
 	    
 	    Optional<User> player;
 	    
-	    player = userService.getUserByNumber(userNumber);
+	    player = userService.getUserById(userId);
 	    
 	    if (player.isEmpty()) {
 	        return null;
@@ -69,7 +69,7 @@ public class GameEventController {
 	
 	@PutMapping(BASE_PATH + "next")
 	public String respondToNextGameEvent(
-	        @RequestParam(name="user_number", required = true) long userNumber,
+	        @RequestParam(name="user_id", required = true) long userId,
 	        @RequestParam(name="game_event_id", required=true) long gameEventId,
 	        @RequestParam(name="choice_id", required = true) long choiceId) {
 	    
@@ -79,7 +79,7 @@ public class GameEventController {
 	    
 	    Optional<User> player;
 	    
-	    player=userService.getUserByNumber(userNumber);
+	    player=userService.getUserById(userId);
 	    
 	    if (player.isEmpty()) {
 	        return null;

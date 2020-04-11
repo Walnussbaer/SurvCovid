@@ -32,11 +32,11 @@ public class InventoryItem {
 		this.itemType = itemType;
 		this.itemCount = itemCount;
 
-		this.id = new InventoryItemId(user.getUserNumber(), itemType.getItemTypeId());
+		this.id = new InventoryItemId(user.getUserId(), itemType.getItemTypeId());
 	}
 
 	public long getUserNumber() {
-		return this.user.getUserNumber();
+		return this.user.getUserId();
 	}
 
 	public String getUserName() {
