@@ -1,0 +1,79 @@
+@startuml
+
+class EventManager {
++ sendEvent()
++ calculateDecision()
+}
+
+class GameEvent {
+GameEventDefinition  def
+DateTime dateTime
+long receiver
+String eventDescription
+}
+
+class GameEventDefinition {
+int id
+String descriptionTemplate
+final String GameEventDefinitionType
+String shortTitle
+}
+
+
+class GameEventChoice {
+int id
+String description
+
+}
+
+class GameEventImpact {
+int id
+int infectionCount
+}
+
+enum GameEventDefinitionType {
+
+STORY_EVENT
+GENERIC_EVENT
+
+}
+
+class GameManager {
++showMessage(string msg)
+}
+
+/'
+class GameEventChoiceRepository {
++getChoices(def GameEventDefinition )
+
+} '/
+
+/'class GameEventImpactRepository {
++getImpact(def GameEventChoice )
+
+} '/
+
+/'class User {
+  .. Simple Getter ..
+  + register()
+  + getAddress()
+  .. Some setter ..
+  + setName()
+   private data 
+  int age
+  int id
+  int number
+  int points
+  public data 
+  string name
+
+} '/
+
+
+GameEventDefinition "n" -- "m" GameEventChoice 
+GameEvent "n"-- "1" GameEventDefinition
+GameEventChoice "n" -- "1" GameEventImpact
+
+GameEventDefinitionType -- GameEvent
+
+@enduml

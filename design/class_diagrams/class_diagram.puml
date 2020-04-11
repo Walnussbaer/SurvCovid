@@ -1,6 +1,6 @@
 @startuml
 
-class EventManager {
+class GameEventManager {
 + sendEvent()
 + calculateDecision()
 }
@@ -74,6 +74,6 @@ GameEventDefinition "n" -- "m" GameEventChoice
 GameEvent "n"-- "1" GameEventDefinition
 GameEventChoice "n" -- "1" GameEventImpact
 
-GameEventDefinitionType -- GameEvent
+GameEventDefinitionType -- GameEventDefinition
 
 @enduml

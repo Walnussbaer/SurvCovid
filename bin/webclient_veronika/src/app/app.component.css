@@ -1,0 +1,43 @@
+.phone {
+  background-image:url('/assets/img/iphone-160307_1280.png');
+  background-repeat: no-repeat;
+  background-position: top center;
+  background-size:contain;
+  height:850px;
+  width:425px;
+  margin: auto;
+}
+
+.phone-content {
+  position: relative;
+  left:44px;
+  top:125px;
+  background-color: #000000;
+  width: 341px;
+  height:607px;
+  overflow: none;
+}
+
+.status {
+  height:20px;
+  padding-bottom:30px;
+}
+
+@media (max-width:450px)
+{
+  .phone {
+    height:600px;
+    width:300px;
+  }
+
+  .phone-content {
+    width:241px;
+    height:428px;
+    top:88px;
+    left:31px;
+  }
+
+  .status {
+    font-size:0.7em;
+  }
+}
