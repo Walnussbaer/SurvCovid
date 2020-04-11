@@ -1,5 +1,8 @@
 package org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service;
 
+import java.util.Optional;
+
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.GameEventChoice;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.GameEventDefinition;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.repository.GameEventDefinitionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,5 +33,20 @@ public class GameEventDefinitionService {
 		
 		return gameEventDefinition;
 	}
+	
+    public GameEventDefinition getGameEventDefinitionById(long gameEventDefinitionId) {
+        
+        
+        Optional<GameEventDefinition> gameEventDefinition = this.gameEventDefinitionRepository.findById(gameEventDefinitionId);
+        
+        if (gameEventDefinition.isEmpty()) {
+            return null;
+        }
+        
+        return gameEventDefinition.get();
+        
+    }
+	
+	
 
 }

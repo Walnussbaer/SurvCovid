@@ -39,4 +39,8 @@ public class GameManager {
         return this.gameEventManager;
     }
     
+    public void setGameEventmanager(GameEventManager gameEventManager) {
+        this.gameEventManager = gameEventManager;
+    }
+    
 }

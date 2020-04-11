@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class GameEventController {
     
+    private final static String BASE_PATH = "/event/";
+    
     @Autowired
     GameManager gameManager;
     
@@ -33,7 +35,7 @@ public class GameEventController {
     @Autowired 
     GameEventChoiceService gameEventChoiceService;
     
-	@GetMapping("/next_event")
+	@GetMapping(BASE_PATH + "next")
 	public GameEvent getNextGameEvent(@RequestParam(name="user_number", required=true)long userNumber) {
 	    
 	    
@@ -55,7 +57,7 @@ public class GameEventController {
 	        // TODO: implement proper error handling
 	    }
 	    
-	    nextGameEvent = gameEventManager.getNextGameEventForUser(player.get());
+	    nextGameEvent = gameEventManager.serveGameEvent(player.get());
 	    
 	    if (nextGameEvent == null) {
 	        return null;
@@ -65,7 +67,7 @@ public class GameEventController {
 		return nextGameEvent;
 	}
 	
-	@PutMapping("/next_event")
+	@PutMapping(BASE_PATH + "next")
 	public String respondToNextGameEvent(
 	        @RequestParam(name="user_number", required = true) long userNumber,
 	        @RequestParam(name="game_event_id", required=true) long gameEventId,
@@ -73,6 +75,7 @@ public class GameEventController {
 	    
 	    GameEvent nextGameEvent = null;
 	    GameEventChoice gameEventChoice = null;
+	    gameEventManager = gameManager.getGameEventManager();
 	    
 	    Optional<User> player;
 	    
@@ -86,14 +89,19 @@ public class GameEventController {
 	    nextGameEvent = gameEventService.getGameEventById(gameEventId);
 	    gameEventChoice = gameEventChoiceService.getGameEventChoiceById(choiceId);
 	    
-	    // TODO: get the availbe choices for the given event id
+	    // TODO: get the availabe choices for the given event id
 	    
 	    // TODO: validate whether user sent a valid choice
 	    
 	    // TODO: write a wrapper function that hides the implementation of receiving an event
+	    
+	    // TODO: validate whether user responded to his/her next event in the database
+	    
 	    nextGameEvent.setChosenChoice(gameEventChoice);
 	    nextGameEvent.setDone(true);
 	    gameEventService.saveGameEvent(nextGameEvent);
+	    
+	    gameEventManager.initiateNewGameEvent(player.get());
 	    
 	    return "Your choice was registered!";
 	    

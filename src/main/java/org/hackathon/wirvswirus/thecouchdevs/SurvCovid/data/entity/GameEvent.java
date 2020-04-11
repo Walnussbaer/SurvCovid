@@ -14,6 +14,7 @@ import javax.persistence.Table;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
@@ -27,6 +28,7 @@ public class GameEvent {
 	
 	@Column(name="CREATION_TIME")
 	@DateTimeFormat(pattern="dd.MM.yyyy")
+	@JsonIgnore //ignore this attribute in the API
 	LocalDateTime serverCreationTime;
 	
 	@Column(name="CLIENT_RECEIVED_TIME")
