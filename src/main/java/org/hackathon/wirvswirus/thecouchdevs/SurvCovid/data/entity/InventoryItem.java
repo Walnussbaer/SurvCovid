@@ -51,6 +51,10 @@ public class InventoryItem {
 		return this.itemType.getItemTypeName();
 	}
 
+	public String getItemTypeDisplayName() {
+		return this.itemType.getItemTypeDisplayName();
+	}
+
 	public int getItemCount() {
 		return this.itemCount;
 	}

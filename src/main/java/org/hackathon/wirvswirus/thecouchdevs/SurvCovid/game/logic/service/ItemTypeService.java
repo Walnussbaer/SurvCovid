@@ -37,4 +37,13 @@ public class ItemTypeService {
 		return itemTypes;
 	}
 
+	public List<ItemType> getRandomItemTypes(int count) {
+		// TODO: Dummy, replaced later
+		return this.itemRepository.getTopByItemTypeNameNotNull();
+	}
+
+	public ItemType getItemByTypeId(long itemTypeId) {
+		return this.itemRepository.getDistinctByItemTypeId(itemTypeId);
+	}
+
 }
