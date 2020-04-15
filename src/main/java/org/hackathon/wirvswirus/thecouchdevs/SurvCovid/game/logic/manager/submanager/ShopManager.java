@@ -39,29 +39,6 @@ public class ShopManager {
 		return (shopService.getShop(player) != null);
 	}
 
-//	public List<ShopItem> getShopStock(User player) {
-//		// Check if there is a shop  which is still valid (shops change with the ingame time).
-//
-//		List<ShopItem> shopItems = new ArrayList<ShopItem>();
-//
-//		Shop shop = shopService.getShop(player);
-//
-//		if(shop != null) {
-//			System.out.println("shop is not null, fetching items");
-//			// TODO: Check if valid
-//
-//			// If yes, fetch items and return
-//			shopItems = shopItemService.getShopItems(shop);
-//		}
-//		else {
-//			// If there is no valid shop or the available one is outdated, we generate a new one (and remove the old one).
-//			System.err.println("No valid shop for player. Creating a new one (NOT IMPLEMENTED YET!");
-//			shopItems = generateNewShopItems(player);
-//		}
-//
-//		return shopItems;
-//	}
-
 	/** Shows the currently available shop  for the specific player.
 	 *
 	 * @param player
@@ -137,14 +114,7 @@ public class ShopManager {
 			return false;
 		}
 
-		//////////////////////////////
-		// BEGIN OF TRANSACTION
-
-		// TODO: Transaction
-		//     TODO: Deal with money
-		//     TODO: Add items to user's inventory
-		//     TODO: Remove them from the shop's stock
-		// 	   TODO: Create entity "ShopHistory" (Date, UserId, ItemTypeId, ItemCount, ItemPrice) and add an entry to it, so we can later check what the user bought when
+		// TODO: Deal with money
 
 		ItemType itemType = itemTypeService.getItemByTypeId(itemTypeId);
 
@@ -156,8 +126,7 @@ public class ShopManager {
 		if(!shopItemService.shopItemRemove(currentShop, itemType, itemAmount))
 			return false;
 
-		// END OF TRANSACTION
-		//////////////////////////////
+		// TODO: Create entity "ShopHistory" (Date, UserId, ItemTypeId, ItemCount, ItemPrice) and add an entry to it, so we can later check what the user bought when
 
 		// Items were bought successfully
 		System.out.println("Removed " + itemAmount + " " + itemType.getItemTypeDisplayName() + " from player " + player.getUserName() + " shop's stock.");
