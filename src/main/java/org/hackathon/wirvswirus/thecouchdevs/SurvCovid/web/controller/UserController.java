@@ -36,7 +36,8 @@ public class UserController {
 	@PostMapping("/user")
 	public String registerUser(@RequestParam(name="userName", required=true)String userName) {
 		
-		User user = new User(userName);		
+		User user = new User(userName);
+		userService.saveUser(user);
 		
 		return Long.toString(user.getUserId());		
 	}
