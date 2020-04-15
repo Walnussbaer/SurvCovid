@@ -19,6 +19,9 @@ public class ItemType {
     @Column(name = "ITEMTYPE_NAME")
     private String itemTypeName;
 
+    @Column(name = "ITEMTYPE_DISPLAYNAME")
+    private String itemTypeDisplayName;
+
 //    @ManyToMany(mappedBy = "itemTypes", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 //    private Set<InventoryItem> inventories;
 
@@ -28,9 +31,10 @@ public class ItemType {
 
     public ItemType() {}
 
-    public ItemType(int itemId, String itemName) {
-        this.itemTypeId = itemId;
-        this.itemTypeName = itemName;
+    public ItemType(int itemTypeId, String itemTypeName, String itemTypeDisplayName) {
+        this.itemTypeId = itemTypeId;
+        this.itemTypeName = itemTypeName;
+        this.itemTypeDisplayName = itemTypeDisplayName;
     }
 
     public long getItemTypeId() {
@@ -39,6 +43,10 @@ public class ItemType {
 
     public String getItemTypeName() {
         return itemTypeName;
+    }
+
+    public String getItemTypeDisplayName() {
+        return itemTypeDisplayName;
     }
 
 }
