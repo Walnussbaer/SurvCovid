@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.Activity;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.GameEvent;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.GameEventChoice;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.GameEventDefinition;
@@ -12,6 +13,7 @@ import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.InventoryItem
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.ItemType;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.User;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.enumeration.GameEventDefinitionType;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service.ActivityService;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service.GameEventChoiceService;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service.GameEventDefinitionService;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service.GameEventService;
@@ -36,7 +38,11 @@ public class SurvCovidApplication {
 	 * @param userService
 	 * @return
 	 */
-	@Bean CommandLineRunner createUserTestData(UserService userService, ItemTypeService itemTypeService, InventoryService inventoryService) {
+	@Bean CommandLineRunner createUserTestData(UserService userService,
+			ItemTypeService itemTypeService,
+			InventoryService inventoryService,
+			ActivityService activityService) {
+		
 		return args -> {
 		    
 			System.out.println("Creating user test data");
@@ -91,6 +97,13 @@ public class SurvCovidApplication {
             userItems = inventoryService.getInventory("Philipp");
             for(InventoryItem i: userItems)
                 System.out.println("User " + i .getUserName() + " has " + i.getItemCount() + " of " + i.getItemTypeName() + ".");
+            
+            // Add Activities
+            System.out.println("Adding some Activities");
+            Activity activity1 = new Activity("Workout","One Hour Sport", 2);
+            activityService.saveActivity(activity1);
+            Activity activity2 = new Activity("Learn Suaheli","Learn a Module in Online Suaheli Couse", 3);
+            activityService.saveActivity(activity2);
 			
 			System.out.println("Finished creating user test data");
 		};

@@ -11,6 +11,7 @@ import javax.persistence.Table;
 @Table(name="ACTIVITY")
 public class Activity {
 	
+		
 	@Id
 	@Column(name="ACTIVITY_ID")
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -23,10 +24,16 @@ public class Activity {
 	private String activityDescription;
 	
 	@Column(name="ACTIVITY_EFFORT")
-	private Integer activityEffort;
+	private Integer activityEffort;	
 	
-	//ToDo: Outcome (List), Condition (List)	
+	//ToDo: Outcome (List), Condition (List)
 	
+	//@Column(name="ACTIVITY_OUTCOMES")
+	//private <List> ActivityOutcome activityOutcomes;
+	
+	//@Column(name="ACTIVITY_CONDITION")
+	//private <List> ActivityCondition activityCondition;		
+		
 	public Activity() {}
 	
 	//Constructor using userName

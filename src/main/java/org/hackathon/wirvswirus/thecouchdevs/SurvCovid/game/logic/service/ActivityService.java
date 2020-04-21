@@ -32,10 +32,10 @@ public class ActivityService {
 		return activity;
 	}
 	
-	public List<Activity> getAllActivities(){
-		
+	public List<Activity> getAllActivities(){		
 		List<Activity> activities = (List<Activity>) this.activityRepository.findAll(); 
-		return activities;	}
+		return activities;
+	}
 	
 
 	
