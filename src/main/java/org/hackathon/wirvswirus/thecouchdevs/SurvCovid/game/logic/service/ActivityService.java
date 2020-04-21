@@ -1,6 +1,5 @@
 package org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service;
 
-
 import java.util.List;
 import java.util.Optional;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.Activity;
@@ -34,10 +33,9 @@ public class ActivityService {
 	
 	public List<Activity> getAllActivities(){		
 		List<Activity> activities = (List<Activity>) this.activityRepository.findAll(); 
+		
 		return activities;
 	}
-	
-
 	
 	public Optional<Activity> getActivityById(long id) {
 		
@@ -59,8 +57,6 @@ public class ActivityService {
 		this.activityRepository.deleteById(id);		
 	}
 	
-	
 
-	
 
 }

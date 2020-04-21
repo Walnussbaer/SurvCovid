@@ -1,5 +1,7 @@
 package org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -28,19 +30,25 @@ public class Activity {
 	
 	//ToDo: Outcome (List), Condition (List)
 	
-	//@Column(name="ACTIVITY_OUTCOMES")
-	//private <List> ActivityOutcome activityOutcomes;
+	@Column(name="ACTIVITY_OUTCOMES")
+	private List <ActivityOutcome> activityOutcomes;
 	
-	//@Column(name="ACTIVITY_CONDITION")
-	//private <List> ActivityCondition activityCondition;		
+	@Column(name="ACTIVITY_CONDITIONS")
+	private List <ActivityCondition> activityConditions;		
 		
 	public Activity() {}
 	
-	//Constructor using userName
-	public Activity(String actvityName, String activityDescription, Integer activityEffort) {
+	//Constructor
+	public Activity(String actvityName,
+			String activityDescription,
+			Integer activityEffort,
+			List <ActivityOutcome> activityOutcomes,
+			List <ActivityCondition> activityConditions) {
 		this.activityName = actvityName;
 		this.activityDescription = activityDescription;
 		this.activityEffort = activityEffort;
+		this.activityOutcomes = activityOutcomes;
+		this.activityConditions = activityConditions;
 	}
 
 	//Get-Methods

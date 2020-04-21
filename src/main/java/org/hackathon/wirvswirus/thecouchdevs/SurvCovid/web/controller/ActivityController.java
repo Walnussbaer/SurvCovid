@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.Activity;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.ActivityCondition;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.ActivityOutcome;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service.ActivityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,9 +37,12 @@ public class ActivityController {
 	@PostMapping("/activity")
 	public String registerActivity(@RequestParam(name="activityName", required=true)String activityName,
 			@RequestParam(name="activityDescription", required=true)String activityDescription,
-			@RequestParam(name="activityEffort", required=true)Integer activityEffort) {
+			@RequestParam(name="activityEffort", required=true)Integer activityEffort/*,
+			@RequestParam(name="activityOutcome", required=false)List <ActivityOutcome> activityOutcomes,
+			@RequestParam(name="activityCondition", required=false)List <ActivityCondition> activityConditions */
+			) {
 		
-		Activity activity = new Activity(activityName, activityDescription, activityEffort);		
+		Activity activity = new Activity(activityName, activityDescription, activityEffort, null, null);		
 		
 		return Long.toString(activity.getActivityId());		
 	}
