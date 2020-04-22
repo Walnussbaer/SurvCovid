@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.*;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.enumeration.GameEventDefinitionType;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.manager.GameManager;
@@ -33,7 +34,8 @@ public class SurvCovidApplication {
 											   InventoryService inventoryService,
 											   ShopService shopService,
 											   ShopItemService shopItemService,
-											   GameManager gameManager) {
+											   GameManager gameManager,
+                         ActivityService activityService) {
 		return args -> {
 		    
 			System.out.println("Creating user test data");
@@ -109,6 +111,12 @@ public class SurvCovidApplication {
 			for(ShopItem ssi: sortiment)
 				System.out.println("- ItemType '" + ssi.getItemType().getItemTypeDisplayName() + "' / ItemCount: " + ssi.getItemCount() + " / ItemPrice: " + ssi.getItemPrice() + ".");
 
+      // Add Activities
+      System.out.println("Adding some Activities");
+      Activity activity1 = new Activity("Workout","One Hour Sport", 2, null, null);
+      activityService.saveActivity(activity1);
+      Activity activity2 = new Activity("Learn Suaheli","Learn a Module in Online Suaheli Couse", 3,null, null);
+      activityService.saveActivity(activity2);
 		};
 	}
 	
