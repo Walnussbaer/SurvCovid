@@ -6,53 +6,50 @@ import java.util.Optional;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.User;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/api/v1/users")
 public class UserController {
 	
 	@Autowired UserService userService;
-	
-	@GetMapping("/users")
-	public List<User> sendUsers(){
+
+	@GetMapping
+	public List<User> list(){
 		
 		return userService.getAllUsers();
 		
 	}
-	
-	@GetMapping("/user")
-	public Optional<User> sendUser(@RequestParam(name="userNumber", required=true)long userNumber){		
+
+	@GetMapping
+	@RequestMapping("{userId}")
+	public Optional<User> get(@PathVariable long userId){
 		
-		Optional<User> user = userService.getUserById(userNumber);		
+		Optional<User> user = userService.getUserById(userId);
 		
 		return user;		
 	}
 	
-	@PostMapping("/user")
-	public String registerUser(@RequestParam(name="userName", required=true)String userName) {
-		
-		User user = new User(userName);
+	@PostMapping
+	public String create(@RequestBody final User user) {
+
 		userService.saveUser(user);
 		
 		return Long.toString(user.getUserId());		
 	}
 	
-	@DeleteMapping("/user")
-	public void deleteUser(@RequestParam(name="userNumber", required=true)long userNumber) {	
-		userService.deleteUserById(userNumber);			
+	//@DeleteMapping
+	//@RequestMapping("{userId}")
+	@RequestMapping(value = "{userId}", method = RequestMethod.DELETE)
+	public void delete(@PathVariable long userId) {
+		userService.deleteUserById(userId);
 	}
 	
-	@PutMapping("/user")
-	public void modifyUserName(@RequestParam(name="userNumber", required=true)long userNumber,
-			@RequestParam(name="userName", required=true)String userName) {
-		userService.changeUserNameById(userNumber, userName);
-		//this.sendUser(userNumber);
-				
+	//@PutMapping
+	//@RequestMapping("{userId}")
+	@RequestMapping(value = "{userId}", method = RequestMethod.PUT)
+	public void update(@PathVariable long userId, @RequestBody User user) {
+		userService.saveUser(user);
 	}
 
 }

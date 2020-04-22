@@ -35,7 +35,7 @@ public class SurvCovidApplication {
 											   ShopService shopService,
 											   ShopItemService shopItemService,
 											   GameManager gameManager,
-                         ActivityService activityService) {
+											   ActivityService activityService) {
 		return args -> {
 		    
 			System.out.println("Creating user test data");
@@ -103,7 +103,6 @@ public class SurvCovidApplication {
 			ShopItem shopItem2 = new ShopItem(userShop, itemType2, 27, 19.99);
 			shopItemService.saveShopItem(shopItem2);
 
-
 			ShopManager shopManager = gameManager.getShopManager();
 			List<ShopItem> sortiment = shopManager.getOrCreateShopStock(user);
 
@@ -111,12 +110,12 @@ public class SurvCovidApplication {
 			for(ShopItem ssi: sortiment)
 				System.out.println("- ItemType '" + ssi.getItemType().getItemTypeDisplayName() + "' / ItemCount: " + ssi.getItemCount() + " / ItemPrice: " + ssi.getItemPrice() + ".");
 
-      // Add Activities
-      System.out.println("Adding some Activities");
-      Activity activity1 = new Activity("Workout","One Hour Sport", 2, null, null);
-      activityService.saveActivity(activity1);
-      Activity activity2 = new Activity("Learn Suaheli","Learn a Module in Online Suaheli Couse", 3,null, null);
-      activityService.saveActivity(activity2);
+			// Add Activities
+			System.out.println("Adding some Activities");
+			Activity activity1 = new Activity("Workout","One Hour Sport", 2);//, null, null);
+			activityService.saveActivity(activity1);
+			Activity activity2 = new Activity("Learn Suaheli","Learn a Module in Online Suaheli Couse", 3);//,null, null);
+			activityService.saveActivity(activity2);
 		};
 	}
 	
@@ -134,9 +133,7 @@ public class SurvCovidApplication {
 			
 			User player = new User("Peter");
 			userService.saveUser(player);
-			
 
-			
 			GameEventDefinition gameEventDefinition = new GameEventDefinition("This is a test event. What do you want to do?", "test",GameEventDefinitionType.GENERIC_EVENT);
 			gameEventDefinitionService.saveGameEventDefinition(gameEventDefinition);
 			
@@ -163,12 +160,10 @@ public class SurvCovidApplication {
             gamneEventChoices.add(gameEventChoice_2);
             gamneEventChoices.add(gameEventChoice_3);
             gamneEventChoices.add(gameEventChoice_4);
-            
-            
+
             gameEventDefinition.setGameEventChoices(gamneEventChoices);
             
             gameEventDefinitionService.saveGameEventDefinition(gameEventDefinition);
-			
 
 			System.out.println("Finished creating game event test data");
 			

@@ -29,26 +29,26 @@ public class Activity {
 	private Integer activityEffort;	
 	
 	//ToDo: Outcome (List), Condition (List)
-	
-	@Column(name="ACTIVITY_OUTCOMES")
-	private List <ActivityOutcome> activityOutcomes;
-	
-	@Column(name="ACTIVITY_CONDITIONS")
-	private List <ActivityCondition> activityConditions;		
-		
+
+//	@Column(name="ACTIVITY_OUTCOMES")
+//	private List <ActivityOutcome> activityOutcomes;
+//
+//	@Column(name="ACTIVITY_CONDITIONS")
+//	private List <ActivityCondition> activityConditions;
+
 	public Activity() {}
 	
 	//Constructor
 	public Activity(String actvityName,
 			String activityDescription,
-			Integer activityEffort,
-			List <ActivityOutcome> activityOutcomes,
-			List <ActivityCondition> activityConditions) {
+			Integer activityEffort) {
+//			List <ActivityOutcome> activityOutcomes,
+//			List <ActivityCondition> activityConditions) {
 		this.activityName = actvityName;
 		this.activityDescription = activityDescription;
 		this.activityEffort = activityEffort;
-		this.activityOutcomes = activityOutcomes;
-		this.activityConditions = activityConditions;
+//		this.activityOutcomes = activityOutcomes;
+//		this.activityConditions = activityConditions;
 	}
 
 	//Get-Methods
@@ -57,7 +57,7 @@ public class Activity {
 	}
 	
 	public Integer getActivityEffort() {
-		return this.getActivityEffort();
+		return this.activityEffort;
 	}
 		
 	public long getActivityId() {

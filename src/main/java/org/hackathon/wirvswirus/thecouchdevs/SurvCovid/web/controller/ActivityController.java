@@ -42,7 +42,7 @@ public class ActivityController {
 			@RequestParam(name="activityCondition", required=false)List <ActivityCondition> activityConditions */
 			) {
 		
-		Activity activity = new Activity(activityName, activityDescription, activityEffort, null, null);		
+		Activity activity = new Activity(activityName, activityDescription, activityEffort);//, null, null);
 		
 		return Long.toString(activity.getActivityId());		
 	}
