@@ -2,6 +2,7 @@ package org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.manager;
 
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.manager.submanager.GameEventManager;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.manager.submanager.ServiceManager;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.manager.submanager.ShopManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
@@ -21,14 +22,18 @@ public class GameManager {
     
     @Autowired
     private GameEventManager gameEventManager;
+
+    @Autowired
+    private ShopManager shopManager;
         
     public GameManager() {
         
     }
     
     @Autowired
-    public GameManager(GameEventManager gameEventManager) {
+    public GameManager(GameEventManager gameEventManager, ShopManager shopManager) {
         this.gameEventManager = gameEventManager;
+        this.shopManager = shopManager;
     }
     
     public void sayHello() {
@@ -37,6 +42,10 @@ public class GameManager {
     
     public GameEventManager getGameEventManager() {
         return this.gameEventManager;
+    }
+
+    public ShopManager getShopManager() {
+        return this.shopManager;
     }
     
     public void setGameEventmanager(GameEventManager gameEventManager) {

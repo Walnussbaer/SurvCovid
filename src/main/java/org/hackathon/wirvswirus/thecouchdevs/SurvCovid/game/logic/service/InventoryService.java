@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class InventoryService {
@@ -29,9 +30,13 @@ public class InventoryService {
         return this.inventoryRepository.findByUser(user);
     }
 
-    public List<InventoryItem> getInventory(String userName) {
-        User user = userService.getUserByName(userName);
-        return this.getInventory(user);
+    public List<InventoryItem> getInventory(long userId) {
+        Optional<User> user = userService.getUserById(userId);
+        if(user.isEmpty()) {
+            // TODO: Add error handling
+            return null;
+        }
+        return this.getInventory(user.get());
     }
 
     public void addItem(User user, ItemType itemType) {

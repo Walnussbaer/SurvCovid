@@ -5,21 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.Activity;
-import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.GameEvent;
-import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.GameEventChoice;
-import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.GameEventDefinition;
-import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.InventoryItem;
-import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.ItemType;
-import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.User;
+
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.*;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.enumeration.GameEventDefinitionType;
-import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service.ActivityService;
-import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service.GameEventChoiceService;
-import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service.GameEventDefinitionService;
-import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service.GameEventService;
-import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service.InventoryService;
-import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service.ItemTypeService;
-import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service.UserService;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.manager.GameManager;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.manager.submanager.ShopManager;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -39,10 +30,12 @@ public class SurvCovidApplication {
 	 * @return
 	 */
 	@Bean CommandLineRunner createUserTestData(UserService userService,
-			ItemTypeService itemTypeService,
-			InventoryService inventoryService,
-			ActivityService activityService) {
-		
+											   ItemTypeService itemTypeService,
+											   InventoryService inventoryService,
+											   ShopService shopService,
+											   ShopItemService shopItemService,
+											   GameManager gameManager,
+                         ActivityService activityService) {
 		return args -> {
 		    
 			System.out.println("Creating user test data");
@@ -64,8 +57,8 @@ public class SurvCovidApplication {
 
             // Adding item type
             System.out.println("Creating item types");
-            ItemType itemType1 = new ItemType(1, "Zeitung");
-            ItemType itemType2 = new ItemType(2, "Buch");
+            ItemType itemType1 = new ItemType(1, "newspaper", "Zeitung");
+            ItemType itemType2 = new ItemType(2, "book", "Buch");
             itemTypeService.addItem(itemType1);
             itemTypeService.addItem(itemType2);
 
@@ -73,7 +66,7 @@ public class SurvCovidApplication {
             System.out.println("List all item types in the database:");
             List<ItemType> testItemTypes = itemTypeService.getAllItemTypes();
             for(ItemType i: testItemTypes)
-                System.out.println("  - (" + i.getItemTypeId() + ") " + i.getItemTypeName());
+                System.out.println("  - (" + i.getItemTypeId() + " / " + i.getItemTypeName() + ") => '" + i.getItemTypeDisplayName() + "'");
 
             // Adding items of item types to the user's inventory
             System.out.println("Adding items to the user's inventory");
@@ -84,9 +77,9 @@ public class SurvCovidApplication {
 
             // List items in user's inventory
             System.out.println("List items of user " + user.getUserName() + "s inventory");
-            List<InventoryItem> userItems = inventoryService.getInventory("Philipp");
+            List<InventoryItem> userItems = inventoryService.getInventory(user.getUserId());
             for(InventoryItem i: userItems)
-                System.out.println("User " + i .getUserName() + " has " + i.getItemCount() + " of " + i.getItemTypeName() + ".");
+                System.out.println("User " + i .getUserName() + " has " + i.getItemCount() + " of " + i.getItemTypeDisplayName() + ".");
 
             // Adding some more of one item type to the user's inventory
             System.out.println("Adding some more of one item type to the user's inventory");
@@ -94,18 +87,36 @@ public class SurvCovidApplication {
 
             // List items in user's inventory
             System.out.println("List items of user " + user.getUserName() + "s inventory");
-            userItems = inventoryService.getInventory("Philipp");
+            userItems = inventoryService.getInventory(user.getUserId());
             for(InventoryItem i: userItems)
-                System.out.println("User " + i .getUserName() + " has " + i.getItemCount() + " of " + i.getItemTypeName() + ".");
-            
-            // Add Activities
-            System.out.println("Adding some Activities");
-            Activity activity1 = new Activity("Workout","One Hour Sport", 2, null, null);
-            activityService.saveActivity(activity1);
-            Activity activity2 = new Activity("Learn Suaheli","Learn a Module in Online Suaheli Couse", 3,null, null);
-            activityService.saveActivity(activity2);
-			
-			System.out.println("Finished creating user test data");
+                System.out.println("User " + i .getUserName() + " has " + i.getItemCount() + " of " + i.getItemTypeDisplayName() + ".");
+
+			////////// Testing shops
+			// Create a shop
+			System.out.println("Testing Shop creation");
+			Shop userShop = new Shop(user);
+			userShop = shopService.saveShop(userShop);
+
+			// Adding items to Shop
+			ShopItem shopItem1 = new ShopItem(userShop, itemType1, 5, 4.75);
+			shopItemService.saveShopItem(shopItem1);
+			ShopItem shopItem2 = new ShopItem(userShop, itemType2, 27, 19.99);
+			shopItemService.saveShopItem(shopItem2);
+
+
+			ShopManager shopManager = gameManager.getShopManager();
+			List<ShopItem> sortiment = shopManager.getOrCreateShopStock(user);
+
+			System.out.println("Shop of player " + user.getUserName() + " currently offers the following items:");
+			for(ShopItem ssi: sortiment)
+				System.out.println("- ItemType '" + ssi.getItemType().getItemTypeDisplayName() + "' / ItemCount: " + ssi.getItemCount() + " / ItemPrice: " + ssi.getItemPrice() + ".");
+
+      // Add Activities
+      System.out.println("Adding some Activities");
+      Activity activity1 = new Activity("Workout","One Hour Sport", 2, null, null);
+      activityService.saveActivity(activity1);
+      Activity activity2 = new Activity("Learn Suaheli","Learn a Module in Online Suaheli Couse", 3,null, null);
+      activityService.saveActivity(activity2);
 		};
 	}
 	
