@@ -13,13 +13,13 @@ import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service.UserSe
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/api/v1/event/")
 public class GameEventController {
-    
-    private final static String BASE_PATH = "/event/";
     
     @Autowired
     GameManager gameManager;
@@ -35,8 +35,8 @@ public class GameEventController {
     @Autowired 
     GameEventChoiceService gameEventChoiceService;
     
-	@GetMapping(BASE_PATH + "next")
-	public GameEvent getNextGameEvent(@RequestParam(name="user_id", required=true)long userId) {
+	@GetMapping("/next")
+	public GameEvent getNext(@RequestParam(name="user_id", required=true)long userId) {
 	    
 	    
 	    gameEventManager = gameManager.getGameEventManager();
@@ -67,8 +67,8 @@ public class GameEventController {
 		return nextGameEvent;
 	}
 	
-	@PutMapping(BASE_PATH + "next")
-	public String respondToNextGameEvent(
+	@PutMapping("/next")
+	public String respondNext(
 	        @RequestParam(name="user_id", required = true) long userId,
 	        @RequestParam(name="game_event_id", required=true) long gameEventId,
 	        @RequestParam(name="choice_id", required = true) long choiceId) {
