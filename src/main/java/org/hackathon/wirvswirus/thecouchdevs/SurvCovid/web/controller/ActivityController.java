@@ -37,12 +37,12 @@ public class ActivityController {
 	@PostMapping("/activity")
 	public String registerActivity(@RequestParam(name="activityName", required=true)String activityName,
 			@RequestParam(name="activityDescription", required=true)String activityDescription,
-			@RequestParam(name="activityEffort", required=true)Integer activityEffort/*,
+			@RequestParam(name="activityEffort", required=true)Integer activityEffort,
 			@RequestParam(name="activityOutcome", required=false)List <ActivityOutcome> activityOutcomes,
-			@RequestParam(name="activityCondition", required=false)List <ActivityCondition> activityConditions */
+			@RequestParam(name="activityCondition", required=false)List <ActivityCondition> activityConditions
 			) {
 		
-		Activity activity = new Activity(activityName, activityDescription, activityEffort);//, null, null);
+		Activity activity = new Activity(activityName, activityDescription, activityEffort, null, null);
 		
 		return Long.toString(activity.getActivityId());		
 	}

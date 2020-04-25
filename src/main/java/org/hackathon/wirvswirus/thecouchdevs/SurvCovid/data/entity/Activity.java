@@ -7,6 +7,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -30,25 +33,35 @@ public class Activity {
 	
 	//ToDo: Outcome (List), Condition (List)
 
-//	@Column(name="ACTIVITY_OUTCOMES")
-//	private List <ActivityOutcome> activityOutcomes;
-//
-//	@Column(name="ACTIVITY_CONDITIONS")
-//	private List <ActivityCondition> activityConditions;
+	@ManyToMany
+	@JoinTable (
+	        name = "ACTIVITY_OUTCOME",
+	        joinColumns = @JoinColumn(name="ACTIVITY_ID"),
+	        inverseJoinColumns = @JoinColumn(name="ACTIVITY_OUTCOME_ID")
+	)
+	private List <ActivityOutcome> activityOutcomes;
+	
+	@ManyToMany
+	@JoinTable (
+	        name = "ACTIVITY_CONDITION",
+	        joinColumns = @JoinColumn(name="ACTIVITY_ID"),
+	        inverseJoinColumns = @JoinColumn(name="ACTIVITY_CONDITION_ID")
+	)
+	private List <ActivityCondition> activityConditions;
 
 	public Activity() {}
 	
 	//Constructor
 	public Activity(String actvityName,
 			String activityDescription,
-			Integer activityEffort) {
-//			List <ActivityOutcome> activityOutcomes,
-//			List <ActivityCondition> activityConditions) {
+			Integer activityEffort,
+			List <ActivityOutcome> activityOutcomes,
+			List <ActivityCondition> activityConditions) {
 		this.activityName = actvityName;
 		this.activityDescription = activityDescription;
 		this.activityEffort = activityEffort;
-//		this.activityOutcomes = activityOutcomes;
-//		this.activityConditions = activityConditions;
+		this.activityOutcomes = activityOutcomes;
+		this.activityConditions = activityConditions;
 	}
 
 	//Get-Methods

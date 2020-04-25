@@ -112,9 +112,9 @@ public class SurvCovidApplication {
 
 			// Add Activities
 			System.out.println("Adding some Activities");
-			Activity activity1 = new Activity("Workout","One Hour Sport", 2);//, null, null);
+			Activity activity1 = new Activity("Workout","One Hour Sport", 2, null, null);
 			activityService.saveActivity(activity1);
-			Activity activity2 = new Activity("Learn Suaheli","Learn a Module in Online Suaheli Couse", 3);//,null, null);
+			Activity activity2 = new Activity("Learn Suaheli","Learn a Module in Online Suaheli Couse", 3 ,null, null);
 			activityService.saveActivity(activity2);
 		};
 	}
