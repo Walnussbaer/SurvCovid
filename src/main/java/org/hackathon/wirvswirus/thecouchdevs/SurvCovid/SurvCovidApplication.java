@@ -42,6 +42,7 @@ public class SurvCovidApplication {
 			
 			Stream.of("John","Peter","Max","Volker","Paul","Sharmin","Vroni","Philipp","Gino","Henning").forEach(name -> {
 				User user = new User(name);
+				user.setPassword("12345");
 				userService.saveUser(user);
 			});
 			System.out.println("Created test users");
@@ -131,7 +132,8 @@ public class SurvCovidApplication {
 			
 			System.out.println("Creating game event test data");
 			
-			User player = new User("Peter");
+			User player = new User("NewPeter");
+			player.setPassword("12345");
 			userService.saveUser(player);
 
 			GameEventDefinition gameEventDefinition = new GameEventDefinition("This is a test event. What do you want to do?", "test",GameEventDefinitionType.GENERIC_EVENT);
@@ -165,7 +167,7 @@ public class SurvCovidApplication {
             
             gameEventDefinitionService.saveGameEventDefinition(gameEventDefinition);
 
-			System.out.println("Finished creating game event test data");
+			System.out.println("Finished creating game event test data for user " + player.getUserId());
 			
 		};
 		

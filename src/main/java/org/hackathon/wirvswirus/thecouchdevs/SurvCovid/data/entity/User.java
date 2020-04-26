@@ -1,5 +1,7 @@
 package org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,8 +18,14 @@ public class User {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private long userId;
 	
-	@Column(name="USER_NAME")
+	@Column(name="USER_NAME", nullable=false, unique=true)
 	private String userName;
+	
+	@Column(name="PASSWORD",nullable=false)
+	private String password;
+	
+	@Column(name="LAST_LOGIN")
+	private LocalDateTime lastLogin;
 	
 	public User() {}
 	
@@ -35,9 +43,25 @@ public class User {
 		return this.userId;
 	}
 	
+	public String getPassword() {
+		return password;
+	}
+	
+	public LocalDateTime getLastLogin() {
+		return lastLogin;
+	}
+	
 	//Set-Methods
 	public void setUserName(String userName) {
 		this.userName = userName;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public void setLastLogin(LocalDateTime lastLogin) {
+		this.lastLogin = lastLogin;
 	}
 
 }
