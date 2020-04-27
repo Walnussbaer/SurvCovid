@@ -3,53 +3,48 @@ package org.hackathon.wirvswirus.thecouchdevs.SurvCovid.web.controller;
 import java.util.List;
 import java.util.Optional;
 
-import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.Activity;
-import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.ActivityCondition;
-import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.ActivityOutcome;
-import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service.ActivityService;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.ActivityDefinition;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service.ActivityDefinitionService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/api/v1/activityDefinitions")
 public class ActivityController {
 	
-	@Autowired ActivityService activityService;
+	@Autowired ActivityDefinitionService activityDefinitionService;
 	
-	@GetMapping("/activities")
-	public List<Activity> sendActivitys(){		
-		return activityService.getAllActivities();
+	@GetMapping
+	public List<ActivityDefinition>list(){		
+		return activityDefinitionService.getAllActivitiesDefinitions();
 		
 	}
 	
-	@GetMapping("/activity")
-	public Optional<Activity> sendActivity(@RequestParam(name="activityNumber", required=true)long activityNumber){		
+	@GetMapping
+	@RequestMapping("{activityDefinitionId}")
+	public Optional<ActivityDefinition>get(@PathVariable long activityDefinitionId){		
 		
-		Optional<Activity> activity = activityService.getActivityById(activityNumber);	
+		Optional<ActivityDefinition> activityDefinition = activityDefinitionService.getActivityDefinitionById(activityDefinitionId);	
 		
-		return activity;		
+		return activityDefinition;		
 	}
 	
-	@PostMapping("/activity")
-	public String registerActivity(@RequestParam(name="activityName", required=true)String activityName,
-			@RequestParam(name="activityDescription", required=true)String activityDescription,
-			@RequestParam(name="activityEffort", required=true)Integer activityEffort,
-			@RequestParam(name="activityOutcome", required=false)List <ActivityOutcome> activityOutcomes,
-			@RequestParam(name="activityCondition", required=false)List <ActivityCondition> activityConditions
-			) {
+	@PostMapping
+	public String create(@RequestBody final ActivityDefinition activityDefinition) {
 		
-		Activity activity = new Activity(activityName, activityDescription, activityEffort, null, null);
-		
-		return Long.toString(activity.getActivityId());		
+		activityDefinitionService.saveActivityDefinition(activityDefinition);
+		return Long.toString(activityDefinition.getActivityDefinitionId());		
 	}
 	
-	@DeleteMapping("/activity")
-	public void deleteActivity(@RequestParam(name="activityNumber", required=true)long activityNumber) {	
-		activityService.deleteActivityById(activityNumber);			
+	@RequestMapping(value = "{activityId}", method = RequestMethod.DELETE)
+	public void delete(@PathVariable long activityId) {	
+		activityDefinitionService.deleteActivityDefinitionById(activityId);			
 	}
 	
 

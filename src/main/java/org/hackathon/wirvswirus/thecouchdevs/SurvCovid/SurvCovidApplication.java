@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 
 
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.*;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.ActivityDefinitionCondition.ActivityDefinitionConditionType;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.enumeration.GameEventDefinitionType;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.manager.GameManager;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.manager.submanager.ShopManager;
@@ -35,7 +36,7 @@ public class SurvCovidApplication {
 											   ShopService shopService,
 											   ShopItemService shopItemService,
 											   GameManager gameManager,
-											   ActivityService activityService) {
+											   ActivityDefinitionService activityDefinitionService) {
 		return args -> {
 		    
 			System.out.println("Creating user test data");
@@ -111,11 +112,15 @@ public class SurvCovidApplication {
 				System.out.println("- ItemType '" + ssi.getItemType().getItemTypeDisplayName() + "' / ItemCount: " + ssi.getItemCount() + " / ItemPrice: " + ssi.getItemPrice() + ".");
 
 			// Add Activities
+			
+			//ActivityDefinitionCondition activityDefinitionCondition1 = new ActivityDefinitionCondition(ActivityDefinitionConditionType.INVENTORY_ITEM, 1,3);
+			
+			
 			System.out.println("Adding some Activities");
-			Activity activity1 = new Activity("Workout","One Hour Sport", 2, null, null);
-			activityService.saveActivity(activity1);
-			Activity activity2 = new Activity("Learn Suaheli","Learn a Module in Online Suaheli Couse", 3 ,null, null);
-			activityService.saveActivity(activity2);
+			ActivityDefinition activityDefinition1 = new ActivityDefinition("Workout","One Hour Sport", 2, null, null);
+			activityDefinitionService.saveActivityDefinition(activityDefinition1);
+			ActivityDefinition activityDefinition2 = new ActivityDefinition("Learn Suaheli","Learn a Module in Online Suaheli Couse", 3 ,null, null);
+			activityDefinitionService.saveActivityDefinition(activityDefinition2);
 		};
 	}
 	
