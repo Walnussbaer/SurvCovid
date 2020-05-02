@@ -24,7 +24,7 @@ public class Activity {
 	@Id
 	@Column(name="ACTIVITY_ID")
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private long id;
+	private long ActvitiyId;
 	
 	@Column(name="CREATION_TIME")
 	@DateTimeFormat(pattern="dd.MM.yyyy")
@@ -51,9 +51,11 @@ public class Activity {
         this.activityDefinition = activityDefinition;         
 	}
 
-    public long getId() {
-        return id;
+    public long getActivityId() {
+        return ActvitiyId;
     }
+
+	
    
 
     

@@ -40,7 +40,7 @@ public class ActivityService {
 		
 		Optional<Activity> activity = this.activityRepository.findById(id);
 		if(activity.isEmpty()) {
-			throw new NullPointerException("Activityactivity  ID does not exist");			
+			throw new NullPointerException("Activity ID does not exist");			
 		}		
 		
 		return activity;		
