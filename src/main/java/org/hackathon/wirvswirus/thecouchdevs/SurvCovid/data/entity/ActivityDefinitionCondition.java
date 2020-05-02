@@ -26,6 +26,9 @@ public class ActivityDefinitionCondition {
 	@Enumerated(EnumType.ORDINAL)
 	private ActivityDefinitionConditionType activityDefinitionConditionType;
 	
+	@Column(name="ACTIVITY_DEFINITION_CONDITION_TYPE_ID")
+	private long activityDefinitionTypeID;	
+	
 	@Column(name="ACTIVITY_DEFINITION_CONDITION_VALUE")
 	private int activityDefinitionConditionValue;	
 	
@@ -42,6 +45,7 @@ public class ActivityDefinitionCondition {
 			, int activityDefinitionConditionValue) {
 		this.activityDefinitionConditionType = activityDefinitionConditionType;		
 		this.activityDefinitionConditionValue = activityDefinitionConditionValue;		
+		this.activityDefinitionTypeID = activityDefinitionConditionTypeID;
 	}
 	
 }

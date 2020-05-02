@@ -79,6 +79,15 @@ public class ActivityDefinition {
 		return this.activityDefinitionId;
 	}
 	
+	public boolean hasActivtyConditions() {
+		if(activityDefinitionConditions.size() == 0 ) return false;
+		return true;		
+	}
+	
+	public List <ActivityDefinitionCondition> getActivityDefinitionConditions() {
+		return this.activityDefinitionConditions;
+	}
+	
 	//Set-Methods
 	public void setActivityDefinitionName(String activityDefinitionName) {
 		this.activityDefinitionName = activityDefinitionName;
