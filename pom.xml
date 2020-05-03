@@ -59,6 +59,7 @@
 		</dependency>
 		
 		<!-- required dependencies for using Spring Security -->
+		<!--
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
@@ -68,6 +69,7 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		-->
 		
 	</dependencies>
 

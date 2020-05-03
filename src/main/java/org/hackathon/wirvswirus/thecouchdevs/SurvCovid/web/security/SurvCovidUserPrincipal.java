@@ -5,18 +5,19 @@ import java.util.Collections;
 import java.util.List;
 
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.User;
+/*
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-public class SurvCovidUserPrincipal implements UserDetails {
+*/
+public class SurvCovidUserPrincipal /*implements UserDetails*/ {
 
 	private User user;
 	
 	public SurvCovidUserPrincipal(User user) {
 		this.user = user;
 	}
-
+/*
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		final List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("User"));
@@ -53,6 +54,6 @@ public class SurvCovidUserPrincipal implements UserDetails {
 		return true;
 	}
 	
-	
+	*/
 	
 }

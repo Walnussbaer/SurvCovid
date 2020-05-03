@@ -10,9 +10,9 @@ public class MvcConfig implements WebMvcConfigurer {
     public void addViewControllers(ViewControllerRegistry registry){
 
         /*add view controllers to return specific templates */
-        registry.addViewController("/").setViewName("test.html");
-        registry.addViewController("/abcdefg").setViewName("/templates/blabla.html");
-        registry.addViewController("/login").setViewName("/templates/login");
+        //registry.addViewController("/").setViewName("test.html");
+        //registry.addViewController("/abcdefg").setViewName("/templates/blabla.html");
+        //registry.addViewController("/login").setViewName("login");
 
     }
 }
