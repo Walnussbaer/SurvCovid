@@ -12,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.ActivityDefinitionCondition.ActivityDefinitionConditionType;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
@@ -27,7 +29,7 @@ public class ActivityDefinitionCondition {
 	private ActivityDefinitionConditionType activityDefinitionConditionType;
 	
 	@Column(name="ACTIVITY_DEFINITION_CONDITION_TYPE_ID")
-	private long activityDefinitionTypeID;	
+	private long activityDefinitionConditionTypeID;	
 	
 	@Column(name="ACTIVITY_DEFINITION_CONDITION_VALUE")
 	private int activityDefinitionConditionValue;	
@@ -45,7 +47,22 @@ public class ActivityDefinitionCondition {
 			, int activityDefinitionConditionValue) {
 		this.activityDefinitionConditionType = activityDefinitionConditionType;		
 		this.activityDefinitionConditionValue = activityDefinitionConditionValue;		
-		this.activityDefinitionTypeID = activityDefinitionConditionTypeID;
+		this.activityDefinitionConditionTypeID = activityDefinitionConditionTypeID;
 	}
+	
+	public ActivityDefinitionConditionType  getActivityDefinitionConditionType() {
+		return this.activityDefinitionConditionType;
+		
+	}
+	
+	public long getActivityDefinitionConditionTypeID() {
+		return this.activityDefinitionConditionTypeID;		
+	}
+	
+	public int getActivityDefinitionConditionValue() {
+		return this.getActivityDefinitionConditionValue();
+	}
+	
+	
 	
 }
