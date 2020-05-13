@@ -69,6 +69,18 @@ public class UserService {
 		this.userRepository.deleteById(id);		
 	}
 
+	public boolean checkIfExistsByUserName(String username){
+
+		return userRepository.existsByUserName(username);
+
+	}
+
+	public boolean checkIfExistsByMail(String email){
+
+		return userRepository.existsByEmail(email);
+
+	}
+
 	public User getUserByName(String userName) {
 		return this.userRepository.findByUserName(userName);
 	}

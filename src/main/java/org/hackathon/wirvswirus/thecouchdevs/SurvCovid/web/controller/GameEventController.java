@@ -11,6 +11,7 @@ import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service.GameEv
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service.GameEventService;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,6 +37,7 @@ public class GameEventController {
     GameEventChoiceService gameEventChoiceService;
     
 	@GetMapping("/next")
+	@PreAuthorize("hasRole('PLAYER') or hasRole('MODERATOR') or hasRole('ADMIN')")
 	public GameEvent getNext(@RequestParam(name="user_id", required=true)long userId) {
 	    
 	    
@@ -68,6 +70,7 @@ public class GameEventController {
 	}
 	
 	@PutMapping("/next")
+	@PreAuthorize("hasRole('PLAYER') or hasRole('MODERATOR') or hasRole('ADMIN')")
 	public String respondNext(
 	        @RequestParam(name="user_id", required = true) long userId,
 	        @RequestParam(name="game_event_id", required=true) long gameEventId,
