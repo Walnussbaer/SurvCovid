@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@CrossOrigin(origins="*", maxAge=3600)
 public class WelcomeController {
 	
 

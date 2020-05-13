@@ -76,14 +76,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .anyRequest().authenticated();
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class); // which filter and when
 
-
         // when a user successfully logs in, they are redirected to the previously requested page that required authentication
         // in this case, there is a custom /login page (specified by loginPage() and everyone is allowed to view it
 
-
-
-
     }
-
-
 }
