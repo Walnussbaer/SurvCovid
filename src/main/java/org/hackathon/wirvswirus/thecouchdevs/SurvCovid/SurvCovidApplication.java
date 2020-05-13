@@ -9,21 +9,28 @@ import java.util.stream.Stream;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.*;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.ActivityDefinitionCondition.ActivityDefinitionConditionType;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.enumeration.GameEventDefinitionType;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.enumeration.RoleName;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.repository.RoleRepository;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.manager.GameManager;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.manager.submanager.ShopManager;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootApplication
 public class SurvCovidApplication {
 
+	@Autowired
+	PasswordEncoder encoder;
+
 	public static void main(String[] args) {
 		SpringApplication.run(SurvCovidApplication.class, args);
 	}
-	
+
 	/**
 	 * Creates test data for the user table. 
 	 * 
@@ -43,6 +50,8 @@ public class SurvCovidApplication {
 			
 			Stream.of("John","Peter","Max","Volker","Paul","Sharmin","Vroni","Philipp","Gino","Henning").forEach(name -> {
 				User user = new User(name);
+				user.setPassword(encoder.encode("12345"));
+				user.setEmail(user.getUserName() + "@test.de");
 				userService.saveUser(user);
 			});
 			System.out.println("Created test users");
@@ -136,7 +145,9 @@ public class SurvCovidApplication {
 			
 			System.out.println("Creating game event test data");
 			
-			User player = new User("Peter");
+			User player = new User("NewPeter");
+			player.setPassword(encoder.encode("12345"));
+			player.setEmail(player.getUserName() + "@test.de");
 			userService.saveUser(player);
 
 			GameEventDefinition gameEventDefinition = new GameEventDefinition("This is a test event. What do you want to do?", "test",GameEventDefinitionType.GENERIC_EVENT);
@@ -170,9 +181,24 @@ public class SurvCovidApplication {
             
             gameEventDefinitionService.saveGameEventDefinition(gameEventDefinition);
 
-			System.out.println("Finished creating game event test data");
+			System.out.println("Finished creating game event test data for user " + player.getUserId());
 			
 		};
-		
+		}
+
+	@Bean CommandLineRunner createRoles(RoleRepository roleRepository) {
+
+
+		return args -> {
+
+			Role role_player = new Role(RoleName.ROLE_PLAYER);
+			Role role_admin = new Role(RoleName.ROLE_ADMIN);
+			Role role_mod = new Role(RoleName.ROLE_MODERATOR);
+
+			roleRepository.save(role_player);
+			roleRepository.save(role_admin);
+			roleRepository.save(role_mod);
+
+		};
 	}
 }

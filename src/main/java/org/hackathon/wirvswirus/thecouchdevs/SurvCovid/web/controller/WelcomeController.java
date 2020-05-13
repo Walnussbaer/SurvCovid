@@ -1,19 +1,21 @@
 package org.hackathon.wirvswirus.thecouchdevs.SurvCovid.web.controller;
 
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@CrossOrigin(origins="*", maxAge=3600)
 public class WelcomeController {
 	
+
 	@GetMapping("/")
-	public String welcome(@RequestParam(name="name", required =false,defaultValue="World") String name, Model model) {
-	    
-		
-		return "Hello SurvCovid player";
-		
+	public String welcome() {
+
+		return "This is public content!";
 	}
+
 
 }
