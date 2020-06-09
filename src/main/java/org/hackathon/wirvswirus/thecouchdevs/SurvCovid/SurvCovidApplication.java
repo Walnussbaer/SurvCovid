@@ -56,8 +56,7 @@ public class SurvCovidApplication {
 			});
 			System.out.println("Created test users");
 			userService.getAllUsers().forEach(user -> {
-				System.out.println(user.getUserName());
-				//System.out.println(user.getUserId());
+				System.out.println(user.getUserId() + ") " + user.getUserName());
 			});
 			
 			////////// Testing inventory and items
