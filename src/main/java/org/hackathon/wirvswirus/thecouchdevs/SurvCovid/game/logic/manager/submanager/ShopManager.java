@@ -2,6 +2,7 @@ package org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.manager.subma
 
 
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.*;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.exception.DatabaseIntegrityException;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service.*;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -95,7 +96,7 @@ public class ShopManager {
 	}
 
 	// TODO: Test if transactional behaviour works
-	public boolean buyItems(User player, long itemTypeId, int itemAmount) {
+	public boolean buyItems(User player, long itemTypeId, int itemAmount) throws DatabaseIntegrityException {
 		if(!userHasValidShop(player)) {
 			// User does not have a valid shop
 			System.err.println("Player " + player.getUserName() + "does not have a valid shop. Need to request shop stock first.");
@@ -118,13 +119,19 @@ public class ShopManager {
 
 		ItemType itemType = itemTypeService.getItemByTypeId(itemTypeId);
 
+		if(itemType == null) {
+			throw new DatabaseIntegrityException("ItemType " + itemTypeId + " is not defined in the database!");
+		}
+
 		// Add items to player's inventory
 		inventoryService.addItemCount(player, itemType, itemAmount);
 		System.out.println("Added " + itemAmount + " " + itemType.getItemTypeDisplayName() + " to player " + player.getUserName() + "'s inventory.");
 
 		// Remove item's from shop's stock
-		if(!shopItemService.shopItemRemove(currentShop, itemType, itemAmount))
+		if(!shopItemService.shopItemRemove(currentShop, itemType, itemAmount)) {
+
 			return false;
+		}
 
 		// TODO: Create entity "ShopHistory" (Date, UserId, ItemTypeId, ItemCount, ItemPrice) and add an entry to it, so we can later check what the user bought when
 
