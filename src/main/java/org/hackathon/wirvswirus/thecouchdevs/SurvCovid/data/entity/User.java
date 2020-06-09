@@ -1,5 +1,7 @@
 package org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity;
 
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.response.GameState;
+
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -37,9 +39,6 @@ public class User {
 	@NotBlank
 	@Size(max=120)
 	private String password;
-	
-	@Column(name="LAST_LOGIN")
-	private LocalDateTime lastLogin;
 
 	// assigned roles to this user are stored in a m:n relationship
 	@ManyToMany(fetch = FetchType.EAGER)
@@ -48,8 +47,14 @@ public class User {
 			joinColumns=@JoinColumn(name="USER_ID"),
 			inverseJoinColumns = @JoinColumn(name="ROLE_ID")
 	)
-	// in a HasSet, elements have to be unique
+	// in a HahSet, elements have to be unique
 	private Set<Role> roles = new HashSet<>();
+
+	@Embedded
+	private UserState userState;
+
+	@Embedded
+	private GameState gameState;
 	
 	public User() {}
 	
@@ -77,9 +82,7 @@ public class User {
 		return password;
 	}
 	
-	public LocalDateTime getLastLogin() {
-		return lastLogin;
-	}
+
 
 	public String getEmail() {
 		return email;
@@ -98,9 +101,7 @@ public class User {
 		this.password = password;
 	}
 
-	public void setLastLogin(LocalDateTime lastLogin) {
-		this.lastLogin = lastLogin;
-	}
+
 
 	public void setUserId(long userId) {
 		this.userId = userId;
