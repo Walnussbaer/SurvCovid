@@ -74,6 +74,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/api/auth/**").permitAll() // / authentication endpoint does not need authorization
                     //TODO: discuss in team whether we want another layer in our URL only for security endpoints
                     .antMatchers("/swagger-ui/**").permitAll()  // TODO: add configuration parameter in application.properties to disable this in production mode
+                    .antMatchers("/**").permitAll() // TODO: Properly configure whitelisting of /swagger-ui.html
+                    .antMatchers("/v2/api-docs/**").permitAll()
                     .antMatchers("/v3/api-docs/**").permitAll() // TODO: add configuration parameter in application.properties to disable this in production mode
                     .anyRequest().authenticated();
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class); // which filter and when

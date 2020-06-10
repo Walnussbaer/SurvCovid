@@ -20,8 +20,17 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import springfox.documentation.builders.ParameterBuilder;
+import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.schema.ModelRef;
+import springfox.documentation.service.Parameter;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication
+@EnableSwagger2
 public class SurvCovidApplication {
 
 	@Autowired
@@ -29,6 +38,27 @@ public class SurvCovidApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SurvCovidApplication.class, args);
+	}
+
+
+	@Bean
+	public Docket api() {
+		// Add default headers to all endpoints
+		ParameterBuilder aParameterBuilder = new ParameterBuilder();
+		// First header
+		aParameterBuilder.name("Authorization") // Name of Parameter
+				.modelRef(new ModelRef("string"))
+				.parameterType("header")               // Type of Parameter: "header"
+				.defaultValue("Bearer abcdefabcdefabcdef")
+				.required(true)
+				.build();
+		java.util.List<Parameter> aParameters = new ArrayList<>();
+		aParameters.add(aParameterBuilder.build());             // Add Parameters to all endpoints
+		return new Docket(DocumentationType.SWAGGER_2).select()
+				.apis(RequestHandlerSelectors.any())
+				.paths(PathSelectors.any())
+				.build().pathMapping("")
+				.globalOperationParameters(aParameters);
 	}
 
 	/**
@@ -51,7 +81,7 @@ public class SurvCovidApplication {
 			Stream.of("John","Peter","Max","Volker","Paul","Sharmin","Vroni","Philipp","Gino","Henning").forEach(name -> {
 				User user = new User(name);
 				user.setPassword(encoder.encode("12345"));
-				user.setEmail(user.getUserName() + "@test.de");
+				user.setEmail(user.getUserName() + "@example.invalid");
 				userService.saveUser(user);
 			});
 			System.out.println("Created test users");
