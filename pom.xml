@@ -52,12 +52,6 @@
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.springdoc</groupId>
-			<artifactId>springdoc-openapi-ui</artifactId>
-			<version>1.2.32</version>
-		</dependency>
-		
 		<!-- required dependencies for using Spring Security -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -73,6 +67,29 @@
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt</artifactId>
 			<version>0.9.1</version>
+		</dependency>
+
+		<!-- API-Docs -->
+		<!-- Swagger Configuration (API Documentation) without springfox (old)-->
+		<!--
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-ui</artifactId>
+			<version>1.2.32</version>
+		</dependency>
+		-->
+		<!-- Swagger Configuration (API Documentation) with springfox (more flexible) -->
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>2.9.2</version>
+			<!--scope>compile</scope>-->
+		</dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+			<version>2.9.2</version>
+			<!--scope>compile</scope>-->
 		</dependency>
 		
 	</dependencies>
