@@ -1,5 +1,6 @@
 package org.hackathon.wirvswirus.thecouchdevs.SurvCovid.web.controller;
 
+import io.swagger.annotations.ApiOperation;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.*;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.enumeration.RoleName;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.manager.GameManager;
@@ -34,6 +35,8 @@ public class ShopController {
     
 	@GetMapping("/api/shop/stock")
 	@PreAuthorize("hasAnyRole('PLAYER', 'ADMIN')")
+	@ApiOperation(value = "List stock of a user's shop.",
+			      notes = "Lists the items that are available in the shop for a specific user.")
 	public List<ShopItem> getShopStock(@ApiIgnore @AuthenticationPrincipal SurvCovidUserDetails userDetails,
 									   @RequestParam(name="user_id", required=true)long userId,
 									   HttpServletResponse response) {

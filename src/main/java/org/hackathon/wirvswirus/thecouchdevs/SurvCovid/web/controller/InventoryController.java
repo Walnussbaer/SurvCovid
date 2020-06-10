@@ -1,5 +1,6 @@
 package org.hackathon.wirvswirus.thecouchdevs.SurvCovid.web.controller;
 
+import io.swagger.annotations.ApiOperation;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.InventoryItem;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.User;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.enumeration.ItemBuyStatus;
@@ -39,6 +40,8 @@ public class InventoryController {
 
     @GetMapping("/api/inventory/items")
     @PreAuthorize("hasAnyRole('PLAYER', 'ADMIN')")
+    @ApiOperation(value = "List inventory of a user.",
+                  notes = "Lists the items in a user's inventory.")
     public List<InventoryItem> getInventory(@ApiIgnore @AuthenticationPrincipal SurvCovidUserDetails userDetails,
                                             @RequestParam(name="user_id", required=true)long userId,
                                             HttpServletResponse response) {
@@ -85,6 +88,9 @@ public class InventoryController {
 
     @PostMapping("/api/inventory/items")
     @PreAuthorize("hasAnyRole('PLAYER', 'ADMIN')")
+    @ApiOperation(value = "Buy items for a user.",
+                  notes = "Buy items from the user's shop and put them into his inventory. "
+                          + "This requires the user's shop's stock to be requested using the shop endpoint before.")
     public ItemBuyResponse buyItems(@ApiIgnore @AuthenticationPrincipal SurvCovidUserDetails userDetails,
                                     @Valid @RequestBody ItemBuyRequest itemBuyRequest,
                                     HttpServletResponse response) {
