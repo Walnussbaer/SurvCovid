@@ -2,9 +2,11 @@ package org.hackathon.wirvswirus.thecouchdevs.SurvCovid.web.controller;
 
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.InventoryItem;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.User;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.enumeration.ItemBuyStatus;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.enumeration.RoleName;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.exception.DatabaseIntegrityException;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.request.ItemBuyRequest;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.response.ItemBuyResponse;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.manager.GameManager;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.manager.submanager.ShopManager;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service.InventoryService;
@@ -16,6 +18,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -36,7 +39,7 @@ public class InventoryController {
 
     @GetMapping("/api/inventory/items")
     @PreAuthorize("hasAnyRole('PLAYER', 'ADMIN')")
-    public List<InventoryItem> getInventory(@AuthenticationPrincipal SurvCovidUserDetails userDetails,
+    public List<InventoryItem> getInventory(@ApiIgnore @AuthenticationPrincipal SurvCovidUserDetails userDetails,
                                             @RequestParam(name="user_id", required=true)long userId,
                                             HttpServletResponse response) {
 
@@ -82,31 +85,27 @@ public class InventoryController {
 
     @PostMapping("/api/inventory/items")
     @PreAuthorize("hasAnyRole('PLAYER', 'ADMIN')")
-    public boolean buyItems(@AuthenticationPrincipal SurvCovidUserDetails userDetails,
-//                            @Valid @RequestBody ItemBuyRequest itemBuyRequest,
-            @RequestParam(name="user_id", required = true) long userId,
-            /*@RequestParam(name="shop_id", required=true) long shopId,*/
-            @RequestParam(name="item_type_id", required=true) long itemTypeId,
-            @RequestParam(name="item_amount", required=true) int itemAmount,
-            HttpServletResponse response) {
+    public ItemBuyResponse buyItems(@ApiIgnore @AuthenticationPrincipal SurvCovidUserDetails userDetails,
+                                    @Valid @RequestBody ItemBuyRequest itemBuyRequest,
+                                    HttpServletResponse response) {
 
         System.out.println("[DEBUG] ##### Accessing user inventory endpoint to BUY ITEMS.");
         System.out.println("[DEBUG] Authorities: ");
         for(GrantedAuthority auth: userDetails.getAuthorities())
             System.out.println("  - " + auth);
 
-        System.out.println("[DEBUG] UserID: " + userDetails.getId() + " / " + userId);
+        System.out.println("[DEBUG] UserID: " + userDetails.getId() + " / " + itemBuyRequest.getUserId());
 
         // Check if the user is an admin
         if(!userDetails.getAuthorities().contains(RoleName.ROLE_ADMIN)) {
             System.out.println("[DEBUG] User is not an admin");
             // If the user is not an admin, check if he try to access his own inventory
-            if (userDetails.getId() != userId) {
+            if (userDetails.getId() != itemBuyRequest.getUserId()) {
                 System.out.println("[DEBUG] User is not an admin and tries to access another user's inventory!");
                 // The user try to access another user's inventory => we do not allow this
                 // Set HTTP status "401 Unauthorized"
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                return false;
+                return null;
             }
         }
 
@@ -116,61 +115,63 @@ public class InventoryController {
 
         Optional<User> player;
 
-        player = userService.getUserById(userId);
+        player = userService.getUserById(itemBuyRequest.getUserId());
 
         if (player.isEmpty()) {
-            System.err.println("Could not retrieve user by id '" + userId + "'");
+            System.err.println("Could not retrieve user by id '" + itemBuyRequest.getUserId() + "'");
             // Set HTTP status "401 Unauthorized"
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return false;
+            return null;
         }
 
         boolean success = false;
 
         try {
-            success = shopManager.buyItems(player.get(), itemTypeId, itemAmount);
+            success = shopManager.buyItems(player.get(), itemBuyRequest.getItemTypeId(), itemBuyRequest.getItemAmount());
         }
         catch(DatabaseIntegrityException ex0) {
             System.err.println("Database integrity was violated!"
                     + "\nCould not buy items for user!"
-                    + "\n  UserId: " + userId
-                    + "\n  ItemType: " + itemTypeId
-                    + "\n  ItemAmount: " + itemAmount
+                    + "\n  UserId: " + itemBuyRequest.getUserId()
+                    + "\n  ItemType: " + itemBuyRequest.getItemTypeId()
+                    + "\n  ItemAmount: " + itemBuyRequest.getItemAmount()
                     + "\nException: " + ex0.getMessage()
                     + "\n\n");
             ex0.printStackTrace();
         }
         catch(Exception ex1) {
             System.err.println("An exception occured while buying items for user."
-                    + "\n  UserId: " + userId
-                    + "\n  ItemType: " + itemTypeId
-                    + "\n  ItemAmount: " + itemAmount
+                    + "\n  UserId: " + itemBuyRequest.getUserId()
+                    + "\n  ItemType: " + itemBuyRequest.getItemTypeId()
+                    + "\n  ItemAmount: " + itemBuyRequest.getItemAmount()
                     + "\nException: " + ex1.getMessage()
                     + "\n\n");
             ex1.printStackTrace();
 
             // Set HTTP status "500 Internal Server Error"
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return false;
+            response.setHeader("X-UserMessage",
+                    "An internal error occurred. We are really sorry, please try again later...");
+            return null;
         }
 
         if(!success) {
             System.err.println("Could not buy items for user."
-                    + "\n  UserId: " + userId
-                    + "\n  Itemtype: " + itemTypeId
-                    + "\n  ItemAmount: " + itemAmount);
+                    + "\n  UserId: " + itemBuyRequest.getUserId()
+                    + "\n  Itemtype: " + itemBuyRequest.getItemTypeId()
+                    + "\n  ItemAmount: " + itemBuyRequest.getItemAmount());
 
             // Set HTTP status "403 Forbidden"
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            response.setHeader("X-UserMessage",
-                               "Could not buy the requested items because they are not available in the shop.");
-            return false;
+            return new ItemBuyResponse("Could not buy the requested items because they are not available in the shop.",
+                    ItemBuyStatus.INSUFFICIENT_STOCK);
         }
 
         // Buying items was successful
         // Set HTTP status "200 OK"
         response.setStatus(HttpServletResponse.SC_OK);
-        return success;
+        return new ItemBuyResponse("Bought items.",
+                ItemBuyStatus.SUCCESS);
     }
 
 }

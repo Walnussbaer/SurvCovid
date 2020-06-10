@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -33,7 +34,7 @@ public class ShopController {
     
 	@GetMapping("/api/shop/stock")
 	@PreAuthorize("hasAnyRole('PLAYER', 'ADMIN')")
-	public List<ShopItem> getShopStock(@AuthenticationPrincipal SurvCovidUserDetails userDetails,
+	public List<ShopItem> getShopStock(@ApiIgnore @AuthenticationPrincipal SurvCovidUserDetails userDetails,
 									   @RequestParam(name="user_id", required=true)long userId,
 									   HttpServletResponse response) {
 
