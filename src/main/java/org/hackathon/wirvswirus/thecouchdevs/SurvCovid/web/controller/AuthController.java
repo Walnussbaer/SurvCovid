@@ -2,9 +2,11 @@ package org.hackathon.wirvswirus.thecouchdevs.SurvCovid.web.controller;
 
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.Role;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.User;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.UserState;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.enumeration.RoleName;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.request.LoginRequest;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.request.SignupRequest;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.response.GameState;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.response.JwtResponse;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.response.MessageResponse;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.repository.RoleRepository;
@@ -56,8 +58,17 @@ public class AuthController {
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
+        User user;
+
+        String loginRequestUserName;
+        String loginRequestPassword;
+
+        loginRequestUserName = loginRequest.getUsername();
+        loginRequestPassword = loginRequest.getPassword();
+
+
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+                new UsernamePasswordAuthenticationToken(loginRequestUserName, loginRequestPassword));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
@@ -67,7 +78,14 @@ public class AuthController {
                 .map(item -> item.getAuthority())
                 .collect(Collectors.toList());
 
-        // send 200 OK
+        // update last login for authenticated user
+        user = userService.getUserByName(loginRequestUserName);
+
+        userService.updateLastLogin(user);
+
+        // TODO: implement that users that are set to inactive are not allowed to log in
+
+        // send 200 OK and user data back to client
         return ResponseEntity.ok(new JwtResponse(jwt,
                 userDetails.getId(),
                 userDetails.getUsername(),
@@ -101,7 +119,7 @@ public class AuthController {
         // Create new user's account
         User user = new User(signUpRequest.getUsername(),
                 signUpRequest.getEmail(),
-                encoder.encode(signUpRequest.getPassword()));
+                encoder.encode(signUpRequest.getPassword()),new UserState(),new GameState());
 
         Set<String> strRoles = signUpRequest.getRole();
         Set<Role> roles = new HashSet<>();

@@ -11,7 +11,16 @@ public class UserState {
     @Column(name="LAST_LOGIN")
     private LocalDateTime lastLogin;
 
+    @Column(name="IS_ACTIVE")
+    private boolean isActive;
+
     public UserState (){
+
+    }
+
+    public UserState(boolean isActive) {
+
+        this.isActive = isActive;
 
     }
 
@@ -29,6 +38,11 @@ public class UserState {
         this.lastLogin = lastLogin;
     }
 
+    public boolean isActive() {
+        return isActive;
+    }
 
-
+    public void setActive(boolean active) {
+        isActive = active;
+    }
 }
