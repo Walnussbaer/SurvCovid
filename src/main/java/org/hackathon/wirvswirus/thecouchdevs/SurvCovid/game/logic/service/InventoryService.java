@@ -48,9 +48,12 @@ public class InventoryService {
         InventoryItem inventoryItem = this.inventoryRepository.findInventoryItemByUserAndItemType(user, itemType);
 
         // If the user does not have any items of this type yet, we initialize the entry
-        if(inventoryItem == null)
+        if(inventoryItem == null) {
+            System.err.println("[DEBUG] user: " + user);
+            System.err.println("[DEBUG] itemType: " + itemType);
             inventoryItem = new InventoryItem(user, itemType, 0);
-
+        }
+        
         // We add the new items to the existing ones
         inventoryItem.addItemCount(itemCount);
 
