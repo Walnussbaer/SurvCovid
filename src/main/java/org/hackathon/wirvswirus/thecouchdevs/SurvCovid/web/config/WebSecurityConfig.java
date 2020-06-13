@@ -77,6 +77,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/**").permitAll() // TODO: Properly configure whitelisting of /swagger-ui.html
                     .antMatchers("/v2/api-docs/**").permitAll()
                     .antMatchers("/v3/api-docs/**").permitAll() // TODO: add configuration parameter in application.properties to disable this in production mode
+                    .antMatchers("/h2-console/**").permitAll()
                     .anyRequest().authenticated();
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class); // which filter and when
 

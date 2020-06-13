@@ -2,7 +2,9 @@ package org.hackathon.wirvswirus.thecouchdevs.SurvCovid;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 
@@ -10,6 +12,7 @@ import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.*;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.ActivityDefinitionCondition.ActivityDefinitionConditionType;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.enumeration.GameEventDefinitionType;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.enumeration.RoleName;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.response.GameState;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.repository.RoleRepository;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.manager.GameManager;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.manager.submanager.ShopManager;
@@ -19,6 +22,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import springfox.documentation.builders.ParameterBuilder;
 import springfox.documentation.builders.PathSelectors;
@@ -35,6 +40,9 @@ public class SurvCovidApplication {
 
 	@Autowired
 	PasswordEncoder encoder;
+
+	@Autowired
+	RoleRepository roleRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(SurvCovidApplication.class, args);
@@ -62,11 +70,10 @@ public class SurvCovidApplication {
 	}
 
 	/**
-	 * Creates test data for the user table. 
-	 * 
-	 * @param userService
-	 * @return
+	 * Creates test users and some other test data.
+	 *
 	 */
+	@Order(Ordered.LOWEST_PRECEDENCE)
 	@Bean CommandLineRunner createUserTestData(UserService userService,
 											   ItemTypeService itemTypeService,
 											   InventoryService inventoryService,
@@ -75,21 +82,53 @@ public class SurvCovidApplication {
 											   GameManager gameManager,
 											   ActivityDefinitionService activityDefinitionService) {
 		return args -> {
-		    
-			System.out.println("Creating user test data");
-			
+
+			/* create roles for testing */
+			System.out.println("Creating Roles ...");
+
+			Role role_player = new Role(RoleName.ROLE_PLAYER);
+			Role role_admin = new Role(RoleName.ROLE_ADMIN);
+			Role role_mod = new Role(RoleName.ROLE_MODERATOR);
+
+			roleRepository.save(role_player);
+			roleRepository.save(role_admin);
+			roleRepository.save(role_mod);
+
+			System.out.println("Roles got created!");
+
+			/* set up a couple of different users */
+			System.out.println("Creating user test data ...");
+
 			Stream.of("John","Peter","Max","Volker","Paul","Sharmin","Vroni","Philipp","Gino","Henning").forEach(name -> {
 				User user = new User(name);
 				user.setPassword(encoder.encode("12345"));
-				user.setEmail(user.getUserName() + "@example.invalid");
+				user.setEmail(user.getUserName() + "@example.de");
+				user.setUserState(new UserState(true));
+				user.setGameState(new GameState());
+
 				userService.saveUser(user);
 			});
-			System.out.println("Created test users");
+
+			/* set up an admin user */
+			Set<Role> adminRoles = new HashSet<>();
+			User admin = new User("admin");
+			admin.setPassword(encoder.encode("admin"));
+			admin.setEmail("admin@example.com");
+			admin.setUserState(new UserState(true));
+			admin.setGameState((new GameState()));
+			Role role = roleRepository.findByName(RoleName.ROLE_ADMIN).orElseThrow(() -> new RuntimeException("Error: Role admin was not found"));
+			adminRoles.add(role);
+			admin.setRoles(adminRoles);
+			userService.saveUser(admin);
+
+			System.out.println("Users got created!");
+			/*
 			userService.getAllUsers().forEach(user -> {
 				System.out.println(user.getUserId() + ") " + user.getUserName());
 			});
+			*/
 			
-			////////// Testing inventory and items
+			/* Testing inventory and items */
             // Adding user
             System.out.println("Fetching one test user");
             User user = userService.getUserByName("Philipp");
@@ -168,6 +207,7 @@ public class SurvCovidApplication {
 	 * @param gameEventService
 	 * @return 
 	 */
+	@Order(3)
 	@Bean CommandLineRunner createEventTestData(GameEventService gameEventService, GameEventDefinitionService gameEventDefinitionService, UserService userService, GameEventChoiceService gameEventChoiceService) {
 		
 		return args -> {
@@ -177,6 +217,8 @@ public class SurvCovidApplication {
 			User player = new User("NewPeter");
 			player.setPassword(encoder.encode("12345"));
 			player.setEmail(player.getUserName() + "@test.de");
+			player.setGameState(new GameState());
+			player.setUserState(new UserState(true));
 			userService.saveUser(player);
 
 			GameEventDefinition gameEventDefinition = new GameEventDefinition("This is a test event. What do you want to do?", "test",GameEventDefinitionType.GENERIC_EVENT);
@@ -213,21 +255,6 @@ public class SurvCovidApplication {
 			System.out.println("Finished creating game event test data for user " + player.getUserId());
 			
 		};
-		}
-
-	@Bean CommandLineRunner createRoles(RoleRepository roleRepository) {
-
-
-		return args -> {
-
-			Role role_player = new Role(RoleName.ROLE_PLAYER);
-			Role role_admin = new Role(RoleName.ROLE_ADMIN);
-			Role role_mod = new Role(RoleName.ROLE_MODERATOR);
-
-			roleRepository.save(role_player);
-			roleRepository.save(role_admin);
-			roleRepository.save(role_mod);
-
-		};
 	}
+
 }

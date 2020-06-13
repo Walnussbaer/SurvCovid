@@ -1,5 +1,6 @@
 package org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -78,6 +79,31 @@ public class UserService {
 	public boolean checkIfExistsByMail(String email){
 
 		return userRepository.existsByEmail(email);
+
+	}
+
+	/**
+	 * Updates the date and time of the last login of the given user.
+	 *
+	 * @param user - the user that has logged in
+	 * @return - the updated date and time for the new login
+	 */
+	public LocalDateTime updateLastLogin(User user) {
+
+		LocalDateTime lastLogin;
+
+		// validity check
+		if (user == null) {
+			return null;
+		}
+
+		lastLogin = LocalDateTime.now();
+
+		user.getUserState().setLastLogin(lastLogin);
+
+		System.out.println("User " + user.getUserName() + " has logged in successfully! Last login date is now: " + lastLogin);
+
+		return lastLogin;
 
 	}
 
