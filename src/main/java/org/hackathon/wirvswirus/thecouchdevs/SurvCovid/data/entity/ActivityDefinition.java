@@ -66,39 +66,57 @@ public class ActivityDefinition {
 		
 	}
 
-	//Get-Methods
-	public String getActivityDefinitionName() {
-		return this.activityDefinitionName;
-	}
-	
-	public Integer getActivityDefinitionEffort() {
-		return this.activityDefinitionEffort;
-	}
-		
-	public long getActivityDefinitionId() {
-		return this.activityDefinitionId;
-	}
-	
+
 	public boolean hasActivtyConditions() {
 		if(activityDefinitionConditions.size() == 0 ) return false;
 		return true;		
 	}
-	
-	public List <ActivityDefinitionCondition> getActivityDefinitionConditions() {
-		return this.activityDefinitionConditions;
+
+	public long getActivityDefinitionId() {
+		return activityDefinitionId;
 	}
-	
-	//Set-Methods
+
+	public void setActivityDefinitionId(long activityDefinitionId) {
+		this.activityDefinitionId = activityDefinitionId;
+	}
+
+	public String getActivityDefinitionName() {
+		return activityDefinitionName;
+	}
+
 	public void setActivityDefinitionName(String activityDefinitionName) {
 		this.activityDefinitionName = activityDefinitionName;
 	}
-	
+
+	public String getActivityDefinitionDescription() {
+		return activityDefinitionDescription;
+	}
+
 	public void setActivityDefinitionDescription(String activityDefinitionDescription) {
 		this.activityDefinitionDescription = activityDefinitionDescription;
 	}
-	
+
+	public Integer getActivityDefinitionEffort() {
+		return activityDefinitionEffort;
+	}
+
 	public void setActivityDefinitionEffort(Integer activityDefinitionEffort) {
 		this.activityDefinitionEffort = activityDefinitionEffort;
 	}
 
+	public List<ActivityDefinitionOutcome> getActivityDefinitionOutcomes() {
+		return activityDefinitionOutcomes;
+	}
+
+	public void setActivityDefinitionOutcomes(List<ActivityDefinitionOutcome> activityDefinitionOutcomes) {
+		this.activityDefinitionOutcomes = activityDefinitionOutcomes;
+	}
+
+	public List<ActivityDefinitionCondition> getActivityDefinitionConditions() {
+		return activityDefinitionConditions;
+	}
+
+	public void setActivityDefinitionConditions(List<ActivityDefinitionCondition> activityDefinitionConditions) {
+		this.activityDefinitionConditions = activityDefinitionConditions;
+	}
 }
