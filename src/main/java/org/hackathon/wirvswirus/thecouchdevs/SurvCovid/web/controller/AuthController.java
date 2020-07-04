@@ -14,6 +14,7 @@ import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service.UserSe
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.web.security.SurvCovidUserDetails;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.web.security.jwt.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -50,15 +52,16 @@ public class AuthController {
     JwtUtils jwtUtils;
 
     /**
-     * Authentiace incoming requests to the auth api.
+     * Authenticate incoming requests to the auth api.
      *
-     * @param loginRequest
-     * @return
+     * @param loginRequest - the content of the body of the incoming login request
+     *
+     * @return an HTTP response
      */
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
-        User user;
+        Optional<User> user;
 
         String loginRequestUserName;
         String loginRequestPassword;
@@ -66,9 +69,10 @@ public class AuthController {
         loginRequestUserName = loginRequest.getUsername();
         loginRequestPassword = loginRequest.getPassword();
 
-
+        // authenticate the user using given username and password
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequestUserName, loginRequestPassword));
+        // TODO: prevent that orginal java trace is sent out to client if login was not successful
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
@@ -78,26 +82,39 @@ public class AuthController {
                 .map(item -> item.getAuthority())
                 .collect(Collectors.toList());
 
-        // update last login for authenticated user
         user = userService.getUserByName(loginRequestUserName);
 
-        userService.updateLastLogin(user);
+        // check whether user exists
+        if (user.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("This user does not exist");
+        }
 
-        // TODO: implement that users that are set to inactive are not allowed to log in
+        // check whether account of user is still active
+        if (user.get().getUserState().isActive() == false) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Your account got suspended");
+        }
+
+        // update last login for authenticated user
+        userService.updateLastLogin(user.get());
 
         // send 200 OK and user data back to client
         return ResponseEntity.ok(new JwtResponse(jwt,
                 userDetails.getId(),
                 userDetails.getUsername(),
                 userDetails.getEmail(),
-                roles));
+                roles,
+                user.get().getUserState().getLastLogin(),
+                user.get().getUserState().isActive()
+            )
+        );
     }
 
     /**
      * Register a new user.
      *
-     * @param signUpRequest
-     * @return
+     * @param signUpRequest - the content of the body of the incoming signup request
+     *
+     * @return - an HTTP response
      */
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {

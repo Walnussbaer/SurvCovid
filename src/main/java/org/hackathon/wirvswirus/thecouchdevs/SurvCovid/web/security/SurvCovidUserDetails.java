@@ -7,6 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -28,15 +29,18 @@ public class SurvCovidUserDetails implements UserDetails {
     @JsonIgnore
     private String password;
 
+    private LocalDateTime lastLogin;
+
     private Collection<? extends GrantedAuthority> authorities;
 
-    public SurvCovidUserDetails(Long id, String userName, String email, String password,
+    public SurvCovidUserDetails(Long id, String userName, String email, String password, LocalDateTime lastLogin,
                                 Collection<? extends GrantedAuthority> authorities){
 
         this.id=id;
         this.userName=userName;
         this.email=email;
         this.password=password;
+        this.lastLogin = lastLogin;
         this.authorities=authorities;
 
     }
@@ -52,6 +56,7 @@ public class SurvCovidUserDetails implements UserDetails {
                 user.getUserName(),
                 user.getEmail(),
                 user.getPassword(),
+                user.getUserState().getLastLogin(),
                 authorities);
     }
 
@@ -108,5 +113,8 @@ public class SurvCovidUserDetails implements UserDetails {
         return Objects.equals(id, user.id);
     }
 
+    public LocalDateTime getLastLogin() {
+        return lastLogin;
+    }
 
 }

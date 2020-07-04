@@ -40,8 +40,9 @@ public class UserController {
 	@PostMapping
 	public String create(@RequestBody final User user) {
 
+		// persist the new user
 		userService.saveUser(user);
-		
+
 		return Long.toString(user.getUserId());		
 	}
 	

@@ -10,6 +10,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service // application will automatically detect it and create a bean out of this class
 public class SurvCovidUserDetailsService implements UserDetailsService {
 
@@ -19,8 +21,7 @@ public class SurvCovidUserDetailsService implements UserDetailsService {
 	 * It is used by the DaoAuthenticationProvider to load details about the user during authentication.
 	 * 
 	 */
-	
-	
+
 	@Autowired
 	private UserService userService;
 	
@@ -28,14 +29,14 @@ public class SurvCovidUserDetailsService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		
-		User user = userService.getUserByName(username);
+		Optional<User> user = userService.getUserByName(username);
 		
-		if (user==null) {
+		if (user.isEmpty()) {
 			throw new UsernameNotFoundException("User not found with username: " + username);
 		}
 		
 		// wrap user into a a UserDetails object
-		return SurvCovidUserDetails.build(user);
+		return SurvCovidUserDetails.build(user.get());
 		
 	}
 

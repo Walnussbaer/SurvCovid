@@ -101,14 +101,16 @@ public class UserService {
 
 		user.getUserState().setLastLogin(lastLogin);
 
-		System.out.println("User " + user.getUserName() + " has logged in successfully! Last login date is now: " + lastLogin);
+		System.out.println("User " + user.getUserName() + " has logged in successfully! Last login date is now: " + lastLogin + ", Account state is " + user.getUserState().isActive());
 
 		return lastLogin;
 
 	}
 
-	public User getUserByName(String userName) {
+	public Optional<User> getUserByName(String userName) {
+
 		return this.userRepository.findByUserName(userName);
+
 	}
 
 }
