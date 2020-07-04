@@ -6,13 +6,7 @@ import java.util.Optional;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.ActivityDefinition;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service.ActivityDefinitionService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/activityDefinitions")
@@ -21,31 +15,49 @@ public class ActivityDefinitionController {
 	@Autowired ActivityDefinitionService activityDefinitionService;
 	
 	@GetMapping
-	public List<ActivityDefinition>list(){		
+	public List<ActivityDefinition>list(){
+
 		return activityDefinitionService.getAllActivitiesDefinitions();
-		
+
 	}
 	
 	@GetMapping
 	@RequestMapping("{activityDefinitionId}")
-	public Optional<ActivityDefinition>get(@PathVariable long activityDefinitionId){		
+	public ActivityDefinition get(@PathVariable long activityDefinitionId){
 		
-		Optional<ActivityDefinition> activityDefinition = activityDefinitionService.getActivityDefinitionById(activityDefinitionId);	
+		Optional<ActivityDefinition> activityDefinition = activityDefinitionService.getActivityDefinitionById(activityDefinitionId);
+
+		if (activityDefinition.isEmpty()) {
+			return null;
+		}
 		
-		return activityDefinition;		
+		return activityDefinition.get();
 	}
 	
 	@PostMapping
-	public String create(@RequestBody final ActivityDefinition activityDefinition) {
-		
-		activityDefinitionService.saveActivityDefinition(activityDefinition);
-		return Long.toString(activityDefinition.getActivityDefinitionId());		
+	public ActivityDefinition create(@RequestBody final ActivityDefinition activityDefinition) {
+
+		ActivityDefinition createdActivityDefinition;
+
+		createdActivityDefinition = activityDefinitionService.saveActivityDefinition(activityDefinition);
+
+		return createdActivityDefinition;
 	}
 	
 	@RequestMapping(value = "{activityDefinitionId}", method = RequestMethod.DELETE)
-	public void delete(@PathVariable long activityDefinitionId) {	
+	public void delete(@PathVariable long activityDefinitionId) {
+
 		activityDefinitionService.deleteActivityDefinitionById(activityDefinitionId);			
 	}
-	
 
+	@PutMapping
+	public ActivityDefinition update(@RequestBody final ActivityDefinition activityDefinition) {
+
+		ActivityDefinition updatedActivityDefinition;
+
+		updatedActivityDefinition = activityDefinitionService.saveActivityDefinition(activityDefinition);
+
+		return updatedActivityDefinition;
+
+	}
 }
