@@ -6,6 +6,7 @@ import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.User;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.enumeration.ItemBuyStatus;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.enumeration.RoleName;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.exception.DatabaseIntegrityException;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.exception.UserNotExistingException;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.request.ItemBuyRequest;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.response.ItemBuyResponse;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.manager.GameManager;
@@ -68,21 +69,20 @@ public class InventoryController {
 
         System.err.println("[DEBUG] User is allowed to access the inventory");
 
-        Optional<User> player;
-
-        player = userService.getUserById(userId);
-
-        if (player.isEmpty()) {
-            // Set HTTP status "401 Unauthorized"
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return null;
+        User player;
+        
+        try {
+        	player = userService.getUserById(userId);
+        } catch (UserNotExistingException unee) {
+        	response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        	return null;
         }
 
-        System.out.println("Received request for inventory of user " + player.get().getUserName());
+        System.out.println("Received request for inventory of user " + player.getUserName());
 
         // Set HTTP status "200 OK"
         response.setStatus(HttpServletResponse.SC_OK);
-        return inventoryService.getInventory(player.get());
+        return inventoryService.getInventory(player);
     }
 
 
@@ -119,21 +119,23 @@ public class InventoryController {
 
         ShopManager shopManager = gameManager.getShopManager();
 
-        Optional<User> player;
+        User player;
 
-        player = userService.getUserById(itemBuyRequest.getUserId());
-
-        if (player.isEmpty()) {
+        try {
+        	player = userService.getUserById(itemBuyRequest.getUserId());
+        	
+        } catch (UserNotExistingException unee) {
             System.err.println("Could not retrieve user by id '" + itemBuyRequest.getUserId() + "'");
             // Set HTTP status "401 Unauthorized"
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return null;
         }
+       
 
         boolean success = false;
 
         try {
-            success = shopManager.buyItems(player.get(), itemBuyRequest.getItemTypeId(), itemBuyRequest.getItemAmount());
+            success = shopManager.buyItems(player, itemBuyRequest.getItemTypeId(), itemBuyRequest.getItemAmount());
         }
         catch(DatabaseIntegrityException ex0) {
             System.err.println("Database integrity was violated!"

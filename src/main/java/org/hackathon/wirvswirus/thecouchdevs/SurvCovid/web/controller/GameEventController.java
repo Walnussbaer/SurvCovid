@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.GameEvent;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.GameEventChoice;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.User;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.exception.UserNotExistingException;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.manager.GameManager;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.manager.submanager.GameEventManager;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service.GameEventChoiceService;
@@ -50,16 +51,17 @@ public class GameEventController {
 	    
 	    GameEvent nextGameEvent = null;
 	    
-	    Optional<User> player;
+	    User player;
 	    
-	    player = userService.getUserById(userId);
-	    
-	    if (player.isEmpty()) {
-	        return null;
-	        // TODO: implement proper error handling
+	    try {
+	    	player = userService.getUserById(userId);
+	    } 
+	    catch (UserNotExistingException unee) {
+	    	return null;
+	    	//TODO: implement proper error handling
 	    }
 	    
-	    nextGameEvent = gameEventManager.serveGameEvent(player.get());
+	    nextGameEvent = gameEventManager.serveGameEvent(player);
 	    
 	    if (nextGameEvent == null) {
 	        return null;
@@ -80,13 +82,14 @@ public class GameEventController {
 	    GameEventChoice gameEventChoice = null;
 	    gameEventManager = gameManager.getGameEventManager();
 	    
-	    Optional<User> player;
+	    User player;
 	    
-	    player=userService.getUserById(userId);
-	    
-	    if (player.isEmpty()) {
-	        return null;
-	        // TODO: implement proper error handling
+	    try {
+	    	player=userService.getUserById(userId);
+	    } 
+	    catch (UserNotExistingException unee) {
+	    	return null;
+	    	// TODO: implement proper error handling
 	    }
 	    
 	    nextGameEvent = gameEventService.getGameEventById(gameEventId);
@@ -104,7 +107,7 @@ public class GameEventController {
 	    nextGameEvent.setDone(true);
 	    gameEventService.saveGameEvent(nextGameEvent);
 	    
-	    gameEventManager.initiateNewGameEvent(player.get());
+	    gameEventManager.initiateNewGameEvent(player);
 	    
 	    return "Your choice was registered!";
 	    

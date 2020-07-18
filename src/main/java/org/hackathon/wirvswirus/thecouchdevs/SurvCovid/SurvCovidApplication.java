@@ -5,6 +5,7 @@ import java.util.List;
 
 
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.*;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.exception.UserNotExistingException;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.repository.RoleRepository;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.manager.GameManager;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.manager.submanager.ShopManager;
@@ -27,6 +28,11 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+
+/**
+ * Main entry point of the application. The main() method runs the application.
+ *
+ */
 @SpringBootApplication
 @EnableSwagger2
 public class SurvCovidApplication {
@@ -82,9 +88,14 @@ public class SurvCovidApplication {
 
 			/* Testing inventory and items */
             // Adding user
+			User user; 
             System.out.println("Fetching one test user");
-            User user = userService.getUserByName("Philipp")
-					.orElseThrow(() -> new RuntimeException("No user with name Philipp was found!"));
+            try {
+            	user = userService.getUserByName("Philipp");
+            } 
+            catch (UserNotExistingException unee) {
+            	throw new RuntimeException("No user with name Philipp was found!");
+            }
 
             // Adding item type
             System.out.println("Creating item types");

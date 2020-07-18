@@ -9,6 +9,7 @@ import java.util.Set;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Entity
@@ -56,7 +57,8 @@ public class User {
 	@Embedded
 	private GameState gameState;
 	
-	public User() {}
+	public User() {
+	}
 	
 	//Constructor using userName
 	public User(String userName) {

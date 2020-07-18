@@ -4,12 +4,15 @@ import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.Role;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.User;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.UserState;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.enumeration.RoleName;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.exception.NoValidUserException;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.exception.UserNotExistingException;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.request.LoginRequest;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.request.SignupRequest;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.response.GameState;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.response.JwtResponse;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.response.MessageResponse;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.repository.RoleRepository;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service.RoleService;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service.UserService;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.web.security.SurvCovidUserDetails;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.web.security.jwt.JwtUtils;
@@ -21,6 +24,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -41,9 +45,8 @@ public class AuthController {
     @Autowired
     UserService userService;
 
-    //TODO: implement a role service
     @Autowired
-    RoleRepository roleRepository;
+    RoleService roleService;
 
     @Autowired
     PasswordEncoder encoder;
@@ -61,7 +64,7 @@ public class AuthController {
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
-        Optional<User> user;
+        User user;
 
         String loginRequestUserName;
         String loginRequestPassword;
@@ -82,20 +85,20 @@ public class AuthController {
                 .map(item -> item.getAuthority())
                 .collect(Collectors.toList());
 
-        user = userService.getUserByName(loginRequestUserName);
-
-        // check whether user exists
-        if (user.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("This user does not exist");
+        try {
+        	user = userService.getUserByName(loginRequestUserName);
         }
-
+        catch (UserNotExistingException unee) {
+        	return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("This user does not exist");
+        }
+     
         // check whether account of user is still active
-        if (user.get().getUserState().isActive() == false) {
+        if (user.getUserState().isActive() == false) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Your account got suspended");
         }
 
         // update last login for authenticated user
-        userService.updateLastLogin(user.get());
+        userService.updateLastLogin(user);
 
         // send 200 OK and user data back to client
         return ResponseEntity.ok(new JwtResponse(jwt,
@@ -103,8 +106,8 @@ public class AuthController {
                 userDetails.getUsername(),
                 userDetails.getEmail(),
                 roles,
-                user.get().getUserState().getLastLogin(),
-                user.get().getUserState().isActive()
+                user.getUserState().getLastLogin(),
+                user.getUserState().isActive()
             )
         );
     }
@@ -117,20 +120,11 @@ public class AuthController {
      * @return - an HTTP response
      */
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
-
-        // if the chosen username already exists
-        if (userService.checkIfExistsByUserName(signUpRequest.getUsername())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Username is already taken!"));
-        }
-
-        // if the chosen mail already exists
-        if (userService.checkIfExistsByMail(signUpRequest.getEmail())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Email is already in use!"));
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest, BindingResult bindingResult){
+        
+        // check whether the binding for the given SingnupRequest is valid
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().body(new MessageResponse("This is not a valid signup request!"));
         }
 
         // Create new user's account
@@ -143,7 +137,7 @@ public class AuthController {
 
         // if no role is added, add normal player role
         if (strRoles == null) {
-            Role userRole = roleRepository.findByName(RoleName.ROLE_PLAYER)
+            Role userRole = roleService.findByName(RoleName.ROLE_PLAYER)
                     .orElseThrow(() -> new RuntimeException("Error: Role 'PLAYER' is not found."));
             roles.add(userRole);
         } else {
@@ -151,19 +145,19 @@ public class AuthController {
             strRoles.forEach(role -> {
                 switch (role) {
                     case "admin":
-                        Role adminRole = roleRepository.findByName(RoleName.ROLE_ADMIN)
+                        Role adminRole = roleService.findByName(RoleName.ROLE_ADMIN)
                                 .orElseThrow(() -> new RuntimeException("Error: Role 'ADMIN' is not found."));
                         roles.add(adminRole);
 
                         break;
                     case "mod":
-                        Role modRole = roleRepository.findByName(RoleName.ROLE_MODERATOR)
+                        Role modRole = roleService.findByName(RoleName.ROLE_MODERATOR)
                                 .orElseThrow(() -> new RuntimeException("Error: Role 'MODERATOR' is not found."));
                         roles.add(modRole);
 
                         break;
                     default:
-                        Role userRole = roleRepository.findByName(RoleName.ROLE_PLAYER)
+                        Role userRole = roleService.findByName(RoleName.ROLE_PLAYER)
                                 .orElseThrow(() -> new RuntimeException("Error: Role 'PLAYER' is not found."));
                         roles.add(userRole);
                 }
@@ -171,13 +165,15 @@ public class AuthController {
         }
 
         user.setRoles(roles);
-        userService.saveUser(user);
-
+        
+        try {
+        	userService.saveUser(user);
+        } 
+        catch (NoValidUserException nvue) {
+        	// if the user object is not valid, it cannot be created and an error message is returned
+        	return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(nvue.getMessage());
+        }
+          
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
-
-
-
-
-
 }

@@ -14,7 +14,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * provides information for a logged in user
+ * Represents a logged in user. This class provides object instances which get sent back to the frontend. 
  */
 public class SurvCovidUserDetails implements UserDetails {
 
