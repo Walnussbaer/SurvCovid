@@ -2,6 +2,8 @@ package org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity;
 
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.response.GameState;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -39,6 +41,7 @@ public class User {
 	@Column(name="PASSWORD",nullable=false)
 	@NotBlank
 	@Size(max=120)
+	@JsonIgnore
 	private String password;
 
 	// assigned roles to this user are stored in a m:n relationship
