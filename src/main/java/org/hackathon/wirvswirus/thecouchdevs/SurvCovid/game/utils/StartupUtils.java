@@ -132,42 +132,47 @@ public class StartupUtils {
         User player = userService.getUserByName("John")
                 .orElseThrow(() -> new RuntimeException("No user with name John is existing!"));
 
+        // Create GameEventDefinition (a template for a specific possible event)
         GameEventDefinition gameEventDefinition = new GameEventDefinition(
                 "This is a test event. What do you want to do?",
-                "test",
+                "Test event's short title",
                 GameEventDefinitionType.GENERIC_EVENT);
-
         gameEventDefinitionService.saveGameEventDefinition(gameEventDefinition);
 
-        GameEvent gameEvent = new GameEvent(LocalDateTime.now(), player, gameEventDefinition,false);
-        gameEventService.saveGameEvent(gameEvent);
 
+        // Define event choices
         List<GameEventDefinition> gameEventDefinitions = new ArrayList<GameEventDefinition>();
-
         gameEventDefinitions.add(gameEventDefinition);
 
-        GameEventChoice gameEventChoice_1 = new GameEventChoice("Do someting",gameEventDefinitions);
-        GameEventChoice gameEventChoice_2 = new GameEventChoice("Do something else ",gameEventDefinitions);
-        GameEventChoice gameEventChoice_3 = new GameEventChoice("Do anything",gameEventDefinitions);
-        GameEventChoice gameEventChoice_4 = new GameEventChoice("Do anything else",gameEventDefinitions);
+        // Create possible choices for the event
+        GameEventChoice gameEventChoice_1 = new GameEventChoice("Do something" ,gameEventDefinitions);
+        GameEventChoice gameEventChoice_2 = new GameEventChoice("Do something else ", gameEventDefinitions);
+        GameEventChoice gameEventChoice_3 = new GameEventChoice("Do anything", gameEventDefinitions);
+        GameEventChoice gameEventChoice_4 = new GameEventChoice("Do anything else", gameEventDefinitions);
 
         gameEventChoiceService.saveGameEventChoice(gameEventChoice_1);
         gameEventChoiceService.saveGameEventChoice(gameEventChoice_2);
         gameEventChoiceService.saveGameEventChoice(gameEventChoice_3);
         gameEventChoiceService.saveGameEventChoice(gameEventChoice_4);
 
-        List<GameEventChoice> gamneEventChoices = new ArrayList<GameEventChoice>();
+        // Associate possible choices with event definition
+        List<GameEventChoice> gameEventChoices = new ArrayList<GameEventChoice>();
+        gameEventChoices.add(gameEventChoice_1);
+        gameEventChoices.add(gameEventChoice_2);
+        gameEventChoices.add(gameEventChoice_3);
+        gameEventChoices.add(gameEventChoice_4);
 
-        gamneEventChoices.add(gameEventChoice_1);
-        gamneEventChoices.add(gameEventChoice_2);
-        gamneEventChoices.add(gameEventChoice_3);
-        gamneEventChoices.add(gameEventChoice_4);
-
-        gameEventDefinition.setGameEventChoices(gamneEventChoices);
-
+        gameEventDefinition.setGameEventChoices(gameEventChoices);
         gameEventDefinitionService.saveGameEventDefinition(gameEventDefinition);
 
+        // Instantiate a specific event from the created definition
+        GameEvent gameEvent = new GameEvent(LocalDateTime.now(), player, gameEventDefinition,false);
+        gameEventService.saveGameEvent(gameEvent);
+
         System.out.println("Event test data got created!");
+    }
+
+    public void createSampleEventStoryData() {
 
     }
 
