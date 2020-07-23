@@ -20,6 +20,12 @@ public interface GameEventDefinitionRepository extends CrudRepository<GameEventD
                // Specific player"
             "  evt.PLAYER = (SELECT USER_ID FROM USER WHERE USER_ID = ?1) " +
             "  AND " +
+            "  def_target.ID NOT IN ( " +
+            "    SELECT GAME_EVENT_DEFINITION_ID " +
+            "    FROM GAME_EVENT " +
+            "    WHERE PLAYER = (SELECT USER_ID FROM USER WHERE USER_ID = ?1) " +
+	        ") " +
+            "  AND " +
             "  evt.IS_DONE = TRUE " +
             "  AND " +
             "  ( " +
