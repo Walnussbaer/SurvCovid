@@ -1,9 +1,11 @@
 package org.hackathon.wirvswirus.thecouchdevs.SurvCovid.web.controller;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.GameEvent;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.GameEventChoice;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.GameEventDefinition;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.User;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.manager.GameManager;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.manager.submanager.GameEventManager;
@@ -24,7 +26,8 @@ public class GameEventController {
     
     @Autowired
     GameManager gameManager;
-    
+
+	@Autowired
     GameEventManager gameEventManager;
     
     @Autowired 
@@ -109,5 +112,13 @@ public class GameEventController {
 	    return "Your choice was registered!";
 	    
 	}
+
+	@GetMapping("/possiblenext")
+	@PreAuthorize("hasRole('PLAYER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+	// Test: http://localhost:8080/api/v1/event/possiblenext?user_id=12
+	public List<GameEventDefinition> getPossibleNextEventsForUser(@RequestParam(name="user_id", required=true)long userId) {
+		return gameEventManager.getPossibleNextEventsForUser(userId);
+	}
+
 
 }
