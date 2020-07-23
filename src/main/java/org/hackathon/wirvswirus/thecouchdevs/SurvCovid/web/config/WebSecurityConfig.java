@@ -66,6 +66,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     // this method defines which URL paths should be secured and which should not
     // per default, all paths require authentication if you do not explicitly allow access
     protected void configure(HttpSecurity http) throws Exception {
+
+        // Add exception for CSRF and FrameOptions (=> SAMEORIGIN instead of DENY) for H2-Console
+        http.csrf().ignoringAntMatchers("/h2-console/**")
+            .and().headers().frameOptions().sameOrigin();
+
         http.cors().and().csrf().disable() // configure CORS and CSRF
                 .exceptionHandling().authenticationEntryPoint(unauthorizeHandler).and() // define exception handler
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
