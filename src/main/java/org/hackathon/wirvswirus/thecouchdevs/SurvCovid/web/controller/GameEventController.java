@@ -7,6 +7,8 @@ import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.GameEvent;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.GameEventChoice;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.GameEventDefinition;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.User;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.exception.NoEventsAvailableException;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.response.EventRequestResponse;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.manager.GameManager;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.manager.submanager.GameEventManager;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service.GameEventChoiceService;
@@ -41,35 +43,39 @@ public class GameEventController {
     
 	@GetMapping("/next")
 	@PreAuthorize("hasRole('PLAYER') or hasRole('MODERATOR') or hasRole('ADMIN')")
-	public GameEvent getNext(@RequestParam(name="user_id", required=true)long userId) {
+	public EventRequestResponse getNext(@RequestParam(name="user_id", required=true)long userId) {
 	    
 	    
 	    gameEventManager = gameManager.getGameEventManager();
 	    
 	    if (gameEventManager == null) {
-	        return null;
-	        // TODO: implement proper error handling        
-	    }
-	    
-	    GameEvent nextGameEvent = null;
+			return null;
+			// TODO: implement proper error handling
+		}
 	    
 	    Optional<User> player;
-	    
 	    player = userService.getUserById(userId);
 	    
 	    if (player.isEmpty()) {
 	        return null;
 	        // TODO: implement proper error handling
 	    }
-	    
-	    nextGameEvent = gameEventManager.serveGameEvent(player.get());
-	    
+
+		EventRequestResponse response = null;
+
+		GameEvent nextGameEvent = gameEventManager.serveGameEvent(player.get());
+
 	    if (nextGameEvent == null) {
-	        return null;
-	        // TODO implement proper error handling
+			try {
+				nextGameEvent = gameEventManager.initiateNewGameEvent(player.get());
+			}
+			catch(NoEventsAvailableException ex) {
+				// Could not initiate a new game event, so we return none...
+				return new EventRequestResponse("Could not instantiate a new event for this user. The player did not meet the requirements for any event definition.", null);
+			}
 	    }
-	   
-		return nextGameEvent;
+
+		return new EventRequestResponse("Event was created.", nextGameEvent);
 	}
 	
 	@PutMapping("/next")
@@ -82,7 +88,7 @@ public class GameEventController {
 	    GameEvent nextGameEvent = null;
 	    GameEventChoice gameEventChoice = null;
 	    gameEventManager = gameManager.getGameEventManager();
-	    
+
 	    Optional<User> player;
 	    
 	    player=userService.getUserById(userId);
@@ -106,19 +112,22 @@ public class GameEventController {
 	    nextGameEvent.setChosenChoice(gameEventChoice);
 	    nextGameEvent.setDone(true);
 	    gameEventService.saveGameEvent(nextGameEvent);
-	    
-	    gameEventManager.initiateNewGameEvent(player.get());
-	    
+
 	    return "Your choice was registered!";
 	    
 	}
 
+	////////////////////////////////////////////////////////////////////////
+	/////////////////////////// TESTING ONLY ///////////////////////////////
+	////////////////////////////////////////////////////////////////////////
 	@GetMapping("/possiblenext")
 	@PreAuthorize("hasRole('PLAYER') or hasRole('MODERATOR') or hasRole('ADMIN')")
 	// Test: http://localhost:8080/api/v1/event/possiblenext?user_id=12
 	public List<GameEventDefinition> getPossibleNextEventsForUser(@RequestParam(name="user_id", required=true)long userId) {
-		return gameEventManager.getPossibleNextEventsForUser(userId);
+		return gameEventManager.getPossibleNextEventDefinitionsForUser(userId);
 	}
-
+	////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////
 
 }

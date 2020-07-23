@@ -1,9 +1,11 @@
 package org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.manager.submanager;
 
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.*;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.exception.NoEventsAvailableException;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service.GameEventDefinitionRequirementService;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service.GameEventDefinitionService;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service.GameEventService;
@@ -27,17 +29,44 @@ public class GameEventManager {
 	GameEventDefinitionRequirementService gameEventDefinitionRequirementService;
 	
 	public GameEvent serveGameEvent(User player){
+
+		if (player == null) {
+			throw new NullPointerException("player cannot be null");
+		}
 		
 	    GameEvent gameEvent = null;
 	     
 	    gameEvent = gameEventService.findNextGameEventForUser(player);
-		
+
+
+
+
+		//return gameEventDefinitionService.getPossibleNextEventsForUser(player.getUserId());
+
 		return gameEvent;
 	}
 	
-	public GameEvent initiateNewGameEvent(User player) {
+	public GameEvent initiateNewGameEvent(User player) throws NoEventsAvailableException {
 
-		return null;
+		if (player == null)
+			throw new NullPointerException("player cannot be null");
+
+		LocalDateTime currentTime = LocalDateTime.now();
+
+		List<GameEventDefinition> gameEventDefinitions = gameEventDefinitionService.getPossibleNextEventsForUser(player.getUserId());
+
+		if(gameEventDefinitions.isEmpty())
+			throw new NoEventsAvailableException("No events available for this player.");
+
+		// Select next event from list of possible next events
+		// TODO: Check how we could order those and which one we select
+		GameEventDefinition nextGameEventDefinition = gameEventDefinitions.get(0);
+
+		// Use definition to instantiate an event for this specific user
+		GameEvent gameEvent = new GameEvent(currentTime, player, nextGameEventDefinition, false);
+	    gameEventService.saveGameEvent(gameEvent);
+
+		return gameEvent;
 
 //	    long gameEventDefinitionId = 1;
 //
@@ -131,7 +160,7 @@ public class GameEventManager {
 //	    return gameEvent;
 	}
 
-	public List<GameEventDefinition> getPossibleNextEventsForUser(Long userId) {
+	public List<GameEventDefinition> getPossibleNextEventDefinitionsForUser(Long userId) {
 
 		//////////////////////////////////////////////////////////////////////////
 		////////////////////////////    DEBUGGING   //////////////////////////////
