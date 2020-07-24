@@ -28,7 +28,7 @@ public class GameEventManager {
 	@Autowired
 	GameEventDefinitionRequirementService gameEventDefinitionRequirementService;
 	
-	public GameEvent serveGameEvent(User player){
+	public GameEvent getOpenGameEvent(User player){
 
 		if (player == null) {
 			throw new NullPointerException("player cannot be null");
@@ -158,6 +158,21 @@ public class GameEventManager {
 //	    gameEventService.saveGameEvent(gameEvent);
 //
 //	    return gameEvent;
+	}
+
+	public boolean isPossibleChoice(Long gameEventId, Long gameEventChoiceId) {
+		GameEvent event = gameEventService.getGameEventById(gameEventId);
+		List<GameEventChoice> possibleChoices = event.getGameEventDefinition().getGameEventChoices();
+
+		for(GameEventChoice choice: possibleChoices) {
+			if(choice.getId() == gameEventChoiceId) {
+				// The provided choice matches one of the possible choices
+				return true;
+			}
+		}
+
+		// None of the possible choices matched the one provided
+		return false;
 	}
 
 	public List<GameEventDefinition> getPossibleNextEventDefinitionsForUser(Long userId) {
