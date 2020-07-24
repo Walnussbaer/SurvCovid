@@ -30,8 +30,9 @@ public interface GameEventDefinitionRepository extends CrudRepository<GameEventD
             "  AND " +
             "  ( " +
             "    ( " +
-                   // HAS_HAPPENED
-            "      req.REQUIREMENT_TYPE = 1 " +
+                   // TODO: Use defined constant instead of enum
+                   // HAS_HAPPENED (hard-coded value for enum!!!)
+            "      req.REQUIREMENT_TYPE = 0 " +
             "      AND " +
             "      ( " +
             "        req.GAME_EVENT_CHOICE_ID IS NULL " +
@@ -41,8 +42,9 @@ public interface GameEventDefinitionRepository extends CrudRepository<GameEventD
             "    ) " +
             "    OR " +
             "    ( " +
-                   // HAS_NOT_HAPPENED
-            "      req.REQUIREMENT_TYPE = 2 " +
+                   // TODO: Use defined constant instead of enum
+                   // HAS_NOT_HAPPENED (hard-coded value for enum!!!)
+            "      req.REQUIREMENT_TYPE = 1 " +
             "      AND " +
             "      ( " +
             "        req.GAME_EVENT_CHOICE_ID IS NULL " +

@@ -180,8 +180,8 @@ public class StartupUtils {
         System.out.println("##### Create example data for event flows and requirements");
 
         /////////////// Fetch one test user
-        User user = userService.getUserByName("Philipp")
-                .orElseThrow(() -> new RuntimeException("No user with name Philipp was found!"));
+        User user = userService.getUserByName("admin")
+                .orElseThrow(() -> new RuntimeException("No user with name admin was found!"));
 
         System.out.println("Using user '" + user.getUserName() + "' for demonstration.");
 
