@@ -1,9 +1,12 @@
 package org.hackathon.wirvswirus.thecouchdevs.SurvCovid.web.security.jwt;
 
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service.UserService;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.web.security.SurvCovidUserDetailsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,6 +28,9 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtUtils jwtUtils;
+    
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private SurvCovidUserDetailsService userDetailsService;
@@ -42,7 +48,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
                 // parse username from JWT token
                 String username = jwtUtils.getUserNameFromJwtToken(jwt);
-
+                
                 // get userDetails object for authenticating username
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
                 // build authentication object

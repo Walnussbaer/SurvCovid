@@ -4,6 +4,8 @@ import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.*;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.enumeration.GameEventDefinitionRequirementType;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.enumeration.GameEventDefinitionType;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.enumeration.RoleName;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.exception.NoValidUserException;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.exception.UserNotExistingException;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.response.GameState;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.manager.GameManager;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.manager.submanager.ShopManager;
@@ -60,12 +62,17 @@ public class StartupUtils {
 
     /**
      * Create sample users for SurvCovid to test functionality. This method only creates normal players.
+     * @throws NoValidUserException 
      */
-    public void createSamplePlayerUsers() {
+    public void createSamplePlayerUsers() throws NoValidUserException  {
 
         System.out.println("Creating some player test users ...");
 
-        Stream.of("John","Peter","Max","Volker","Paul","Sharmin","Vroni","Philipp","Gino","Henning").forEach(name -> {
+        String[] nameArray = {"John","Peter","Max","Volker","Paul","Sharmin","Vroni","Philipp","Gino","Henning"};
+        
+        
+        for (String name:nameArray) {
+            
 
             User user = new User(name);
             Set<Role> roles = new HashSet<>();
@@ -73,22 +80,24 @@ public class StartupUtils {
             roles.add(roleService.findByName(RoleName.ROLE_PLAYER)
                     .orElseThrow(() -> new RuntimeException("Error: Role player was not found")));
 
-            user.setPassword(encoder.encode("12345"));
+            user.setPassword("12345");
             user.setRoles(roles);
             user.setEmail(user.getUserName() + "@example.de");
             user.setUserState(new UserState(true));
             user.setGameState(new GameState());
 
             userService.saveUser(user);
-        });
+        }
+       
 
         System.out.println("Player test users got created!");
     }
 
     /**
      * Create an admin superuser which can do everything.
+     * @throws NoValidUserException 
      */
-    public void createSampleAdminUser() {
+    public void createSampleAdminUser() throws NoValidUserException {
 
         System.out.println("Creating a admin test user ...");
 
@@ -97,7 +106,7 @@ public class StartupUtils {
         Role role = roleService.findByName(RoleName.ROLE_ADMIN)
                 .orElseThrow(() -> new RuntimeException("Error: Role admin was not found"));
 
-        admin.setPassword(encoder.encode("admin"));
+        admin.setPassword("admin");
         admin.setEmail("admin@example.com");
         admin.setUserState(new UserState(true));
         admin.setGameState((new GameState()));
@@ -130,13 +139,18 @@ public class StartupUtils {
     }
 
     public void createSampleEventData() {
+    	
+    	User player;
 
         System.out.println("Creating game event test data ...");
-
-        User player = userService.getUserByName("John")
-                .orElseThrow(() -> new RuntimeException("No user with name John is existing!"));
-
-        // Create GameEventDefinition (a template for a specific possible event)
+        
+        try {
+        	player = userService.getUserByName("John");
+        }
+        catch (UserNotExistingException unee) {
+        	throw new RuntimeException("No user with name John is existing!");
+        }
+        
         GameEventDefinition gameEventDefinition = new GameEventDefinition(
                 "This is a test event. What do you want to do?",
                 "Test event's short title",

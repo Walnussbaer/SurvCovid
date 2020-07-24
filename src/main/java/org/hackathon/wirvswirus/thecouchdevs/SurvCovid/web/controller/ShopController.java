@@ -3,6 +3,7 @@ package org.hackathon.wirvswirus.thecouchdevs.SurvCovid.web.controller;
 import io.swagger.annotations.ApiOperation;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.*;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.enumeration.RoleName;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.exception.UserNotExistingException;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.manager.GameManager;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.manager.submanager.ShopManager;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service.*;
@@ -40,6 +41,8 @@ public class ShopController {
 	public List<ShopItem> getShopStock(@ApiIgnore @AuthenticationPrincipal SurvCovidUserDetails userDetails,
 									   @RequestParam(name="user_id", required=true)long userId,
 									   HttpServletResponse response) {
+		
+		User player;
 
 		System.out.println("[DEBUG] ##### Accessing user shop endpoint to LIST STOCK.");
 		System.out.println("[DEBUG] Authorities: ");
@@ -62,14 +65,14 @@ public class ShopController {
 		}
 
 		System.out.println("[DEBUG] User is allowed to access the inventory");
-
-	    Optional<User> player = userService.getUserById(userId);
-	    
-	    if (player.isEmpty()) {
-			// Set HTTP status "401 Unauthorized"
+		
+		try {
+			player = userService.getUserById(userId);
+		} 
+		catch (UserNotExistingException unee) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 	        return null;
-	    }
+		}
 
 		ShopManager shopManager = gameManager.getShopManager();
 
@@ -79,7 +82,7 @@ public class ShopController {
 			return null;
 		}
 
-	    List<ShopItem> shopItems = shopManager.getOrCreateShopStock(player.get());
+	    List<ShopItem> shopItems = shopManager.getOrCreateShopStock(player);
 	    
 	    if (shopItems == null) {
 

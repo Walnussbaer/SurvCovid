@@ -3,6 +3,7 @@ package org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.InventoryItem;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.ItemType;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.User;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.exception.UserNotExistingException;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.repository.InventoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,12 +32,18 @@ public class InventoryService {
     }
 
     public List<InventoryItem> getInventory(long userId) {
-        Optional<User> user = userService.getUserById(userId);
-        if(user.isEmpty()) {
+    	
+    	User user;
+    	
+    	try {
+    		user = userService.getUserById(userId);
+    	} 
+    	catch (UserNotExistingException unee) {
             // TODO: Add error handling
             return null;
-        }
-        return this.getInventory(user.get());
+    	}
+
+        return this.getInventory(user);
     }
 
     public void addItem(User user, ItemType itemType) {

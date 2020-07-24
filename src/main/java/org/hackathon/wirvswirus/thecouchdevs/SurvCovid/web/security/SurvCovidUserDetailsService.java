@@ -3,6 +3,7 @@ package org.hackathon.wirvswirus.thecouchdevs.SurvCovid.web.security;
 
 
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.User;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.exception.UserNotExistingException;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,14 +30,18 @@ public class SurvCovidUserDetailsService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		
-		Optional<User> user = userService.getUserByName(username);
+		User user;
 		
-		if (user.isEmpty()) {
+		try {
+			user = userService.getUserByName(username);
+		} 
+		catch (UserNotExistingException unee) {
+
 			throw new UsernameNotFoundException("User not found with username: " + username);
 		}
 		
 		// wrap user into a a UserDetails object
-		return SurvCovidUserDetails.build(user.get());
+		return SurvCovidUserDetails.build(user);
 		
 	}
 

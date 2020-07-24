@@ -9,6 +9,7 @@ import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.GameEventDefi
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.User;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.enumeration.RoleName;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.exception.NoEventsAvailableException;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.exception.UserNotExistingException;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.response.EventRequestResponse;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.response.SurvCovidBaseResponse;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.manager.GameManager;
@@ -82,18 +83,20 @@ public class GameEventController {
 			// TODO: implement proper error handling
 		}
 	    
-	    Optional<User> player;
-	    player = userService.getUserById(userId);
+	    User player;
+	    
+	    try {
+	    	player = userService.getUserById(userId);
+	    } 
+	    catch (UserNotExistingException unee) {
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+	    	return null;
+	    	//TODO: implement proper error handling
+	    }
 
-		if (player.isEmpty()) {
-			// Set HTTP status "401 Unauthorized"
-			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-			return null;
-		}
+		 EventRequestResponse eventRequestResponse = null;
 
-		EventRequestResponse eventRequestResponse = null;
-
-		GameEvent nextGameEvent = gameEventManager.getOpenGameEvent(player.get());
+		 GameEvent nextGameEvent = gameEventManager.getOpenGameEvent(player.get());
 
 	    if (nextGameEvent == null) {
 			try {
@@ -142,16 +145,17 @@ public class GameEventController {
 	    GameEvent nextGameEvent = null;
 	    GameEventChoice gameEventChoice = null;
 	    gameEventManager = gameManager.getGameEventManager();
-
-	    Optional<User> player;
+    
+	    User player;
 	    
-	    player=userService.getUserById(userId);
-
-		if (player.isEmpty()) {
-			// Set HTTP status "401 Unauthorized"
-			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-			return null;
-		}
+	    try {
+	    	player = userService.getUserById(userId);
+	    } 
+	    catch (UserNotExistingException unee) {
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+	    	return null;
+	    	//TODO: implement proper error handling
+	    }
 	    
 	    nextGameEvent = gameEventService.getGameEventById(gameEventId);
 	    gameEventChoice = gameEventChoiceService.getGameEventChoiceById(choiceId);
@@ -174,9 +178,9 @@ public class GameEventController {
 	    nextGameEvent.setDone(true);
 	    gameEventService.saveGameEvent(nextGameEvent);
 
-		response.setStatus(HttpServletResponse.SC_OK);
+		  response.setStatus(HttpServletResponse.SC_OK);
 	    return new SurvCovidBaseResponse("Your choice was registered, the event is over!");
-	    
+
 	}
 
 	////////////////////////////////////////////////////////////////////////
