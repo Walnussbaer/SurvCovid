@@ -96,11 +96,11 @@ public class GameEventController {
 
 		 EventRequestResponse eventRequestResponse = null;
 
-		 GameEvent nextGameEvent = gameEventManager.getOpenGameEvent(player.get());
+		 GameEvent nextGameEvent = gameEventManager.getOpenGameEvent(player);
 
 	    if (nextGameEvent == null) {
 			try {
-				nextGameEvent = gameEventManager.initiateNewGameEvent(player.get());
+				nextGameEvent = gameEventManager.initiateNewGameEvent(player);
 				// If there was no exception, a next event was created => HTTP code 201
 				response.setStatus(HttpServletResponse.SC_CREATED);
 				return new EventRequestResponse("Created new event for user.", nextGameEvent);
@@ -152,7 +152,7 @@ public class GameEventController {
 	    	player = userService.getUserById(userId);
 	    } 
 	    catch (UserNotExistingException unee) {
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        	response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 	    	return null;
 	    	//TODO: implement proper error handling
 	    }
@@ -161,7 +161,7 @@ public class GameEventController {
 	    gameEventChoice = gameEventChoiceService.getGameEventChoiceById(choiceId);
 
 	    // Ensure that the user only responds to his currently open event
-		GameEvent openEvent = gameEventManager.getOpenGameEvent(player.get());
+		GameEvent openEvent = gameEventManager.getOpenGameEvent(player);
 		if(openEvent.getId() != gameEventId) {
 			// The user tried to respond to another event
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);

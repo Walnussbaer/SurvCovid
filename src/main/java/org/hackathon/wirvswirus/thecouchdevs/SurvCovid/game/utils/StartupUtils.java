@@ -190,12 +190,11 @@ public class StartupUtils {
         System.out.println("Event test data got created!");
     }
 
-    public void createSampleEventFlowData() {
+    public void createSampleEventFlowData() throws UserNotExistingException {
         System.out.println("##### Create example data for event flows and requirements");
 
         /////////////// Fetch one test user
-        User user = userService.getUserByName("admin")
-                .orElseThrow(() -> new RuntimeException("No user with name admin was found!"));
+        User user = userService.getUserByName("admin");
 
         System.out.println("Using user '" + user.getUserName() + "' for demonstration.");
 
@@ -287,12 +286,11 @@ public class StartupUtils {
 
     }
 
-    public void createSampleInventoryData() {
+    public void createSampleInventoryData() throws UserNotExistingException {
         /* Testing inventory and items */
         // Adding user
         System.out.println("Fetching one test user");
-        User user = userService.getUserByName("Philipp")
-                .orElseThrow(() -> new RuntimeException("No user with name Philipp was found!"));
+        User user = userService.getUserByName("Philipp");
 
         // Adding item type
         System.out.println("Creating item types");
@@ -331,12 +329,11 @@ public class StartupUtils {
             System.out.println("User " + i .getUserName() + " has " + i.getItemCount() + " of " + i.getItemTypeDisplayName() + ".");
     }
 
-    public void createSampleShopData() {
+    public void createSampleShopData() throws UserNotExistingException {
         ////////// Testing shops
 
         System.out.println("Fetching one test user");
-        User user = userService.getUserByName("Philipp")
-                .orElseThrow(() -> new RuntimeException("No user with name Philipp was found!"));
+        User user = userService.getUserByName("Philipp");
 
         // Create a shop
         System.out.println("Testing Shop creation");
