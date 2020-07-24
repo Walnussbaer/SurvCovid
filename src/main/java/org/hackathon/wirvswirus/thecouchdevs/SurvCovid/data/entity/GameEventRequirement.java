@@ -32,7 +32,7 @@ public class GameEventRequirement {
 //    @JsonManagedReference
 //    private GameEventDefinition targetGameEventDefinition;
     @Column(name="TARGET_GAME_EVENT_DEFINITION_ID")
-    public BigInteger targetGameEventDefinitionId;
+    public Long targetGameEventDefinitionId;
 
 //    // The ID of the GameEventDefinition which must have happened/must not have happened
 ////    @ManyToOne
@@ -40,7 +40,7 @@ public class GameEventRequirement {
 ////    @JsonManagedReference
 ////    private GameEventDefinition requiredGameEventDefinition;
     @Column(name="REQUIRED_GAME_EVENT_DEFINITION_ID")
-    public BigInteger requiredGameEventDefinitionId;
+    public Long requiredGameEventDefinitionId;
 
     @ManyToOne
     @JoinColumn(name = "GAME_EVENT_CHOICE_ID")
@@ -76,6 +76,20 @@ public class GameEventRequirement {
               gameEventChoice:          Event Y - Choice B
 
      */
+
+    public GameEventRequirement() {
+
+    }
+
+    public GameEventRequirement(GameEventDefinition targetGameEventDefinition,
+                                GameEventDefinition requiredGameEventDefinition,
+                                GameEventChoice choice,
+                                GameEventDefinitionRequirementType requirementType) {
+        this.targetGameEventDefinitionId = targetGameEventDefinition.getId();
+        this.requiredGameEventDefinitionId = requiredGameEventDefinition.getId();
+        this.gameEventChoice = choice;
+        this.type = requirementType;
+    }
 
     public long getId() {
         return id;

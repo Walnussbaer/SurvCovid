@@ -1,6 +1,7 @@
 package org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.utils;
 
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.*;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.enumeration.GameEventDefinitionRequirementType;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.enumeration.GameEventDefinitionType;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.enumeration.RoleName;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.response.GameState;
@@ -32,6 +33,9 @@ public class StartupUtils {
 
     @Autowired
     private GameEventDefinitionService gameEventDefinitionService;
+
+    @Autowired
+    private GameEventDefinitionRequirementService gameEventDefinitionRequirementService;
 
     @Autowired
     private GameEventService gameEventService;
@@ -170,6 +174,99 @@ public class StartupUtils {
         gameEventService.saveGameEvent(gameEvent);
 
         System.out.println("Event test data got created!");
+    }
+
+    public void createSampleEventFlowData() {
+        System.out.println("##### Create example data for event flows and requirements");
+
+        /////////////// Fetch one test user
+        User user = userService.getUserByName("Philipp")
+                .orElseThrow(() -> new RuntimeException("No user with name Philipp was found!"));
+
+        System.out.println("Using user '" + user.getUserName() + "' for demonstration.");
+
+        /////////////// Create some event choices we associate with event definitions later on
+        /////////////// For testing, we will provide those four choices for all event definitions
+        System.out.println("Creating event choices to assign to events later on");
+
+        List<GameEventChoice> choicesForEvent = new ArrayList<GameEventChoice>();
+
+        GameEventChoice gameEventChoice1 = new GameEventChoice("Do the RIGHT thing!");
+        gameEventChoice1 = gameEventChoiceService.saveGameEventChoice(gameEventChoice1);
+        choicesForEvent.add(gameEventChoice1);
+
+        GameEventChoice gameEventChoice2 = new GameEventChoice("Do  another RIGHT thing!");
+        gameEventChoice2 = gameEventChoiceService.saveGameEventChoice(gameEventChoice2);
+        choicesForEvent.add(gameEventChoice2);
+
+        GameEventChoice gameEventChoice3 = new GameEventChoice("Do the WRONG thing!");
+        gameEventChoice3 = gameEventChoiceService.saveGameEventChoice(gameEventChoice3);
+        choicesForEvent.add(gameEventChoice3);
+
+        GameEventChoice gameEventChoice4 = new GameEventChoice("Do another WRONG thing!");
+        gameEventChoice4 = gameEventChoiceService.saveGameEventChoice(gameEventChoice4);
+        choicesForEvent.add(gameEventChoice4);
+
+        /////////////// Create definitions for events the user has finished in the past
+        System.out.println("Create definitions for events the user has finished in the past (and set possible choices)");
+
+        GameEventDefinition gameEventDefinitionPastEvent1 = new GameEventDefinition("Testing event requirements (PAST EVENT 01).",
+                "Requirement Test - Past Event 01",
+                GameEventDefinitionType.GENERIC_EVENT);
+        gameEventDefinitionPastEvent1.setGameEventChoices(choicesForEvent);
+        gameEventDefinitionPastEvent1 = gameEventDefinitionService.saveGameEventDefinition(gameEventDefinitionPastEvent1);
+
+        GameEventDefinition gameEventDefinitionPastEvent2 = new GameEventDefinition("Testing event requirements (PAST EVENT 02).",
+                "Requirement Test - Past Event 02",
+                GameEventDefinitionType.GENERIC_EVENT);
+        gameEventDefinitionPastEvent2.setGameEventChoices(choicesForEvent);
+        gameEventDefinitionPastEvent2 = gameEventDefinitionService.saveGameEventDefinition(gameEventDefinitionPastEvent2);
+
+        /////////////// Tell the database, the user has already finished those events
+        System.out.println("Tell the database, the user has already finished those events (and made the right choices)");
+
+        GameEvent gameEvent1 = new GameEvent(null, user, gameEventDefinitionPastEvent1, true);
+        gameEvent1.setChosenChoice(gameEventChoice1);
+        gameEvent1 = gameEventService.saveGameEvent(gameEvent1);
+
+        GameEvent gameEvent2 = new GameEvent(null, user, gameEventDefinitionPastEvent2, true);
+        gameEvent2.setChosenChoice(gameEventChoice2);
+        gameEvent2 = gameEventService.saveGameEvent(gameEvent2);
+
+        /////////////// Define future events for the user
+        System.out.println("Define possible future events for players (including our example user)");
+
+        GameEventDefinition gameEventDefinitionFutureEvent1 = new GameEventDefinition("Testing event requirements (FUTURE EVENT 01).",
+                "Requirement Test - Future Event 01",
+                GameEventDefinitionType.GENERIC_EVENT);
+        gameEventDefinitionFutureEvent1.setGameEventChoices(choicesForEvent);
+        gameEventDefinitionFutureEvent1 = gameEventDefinitionService.saveGameEventDefinition(gameEventDefinitionFutureEvent1);
+
+        GameEventDefinition gameEventDefinitionFutureEvent2 = new GameEventDefinition("Testing event requirements (FUTURE EVENT 02).",
+                "Requirement Test - Future Event 02",
+                GameEventDefinitionType.GENERIC_EVENT);
+        gameEventDefinitionFutureEvent2.setGameEventChoices(choicesForEvent);
+        gameEventDefinitionFutureEvent2 = gameEventDefinitionService.saveGameEventDefinition(gameEventDefinitionFutureEvent2);
+
+        /////////////// Define requirements for future events
+        System.out.println("Define requirements for future events");
+
+        GameEventRequirement gameEventRequirementFutureEvent1 = new GameEventRequirement(gameEventDefinitionFutureEvent1,
+                gameEventDefinitionPastEvent1,
+                gameEventChoice1,
+                GameEventDefinitionRequirementType.HAS_HAPPENED);
+        gameEventRequirementFutureEvent1 = gameEventDefinitionRequirementService.saveGameEventRequirement(gameEventRequirementFutureEvent1);
+
+        GameEventRequirement gameEventRequirementFutureEvent2 = new GameEventRequirement(gameEventDefinitionFutureEvent2,
+                gameEventDefinitionPastEvent2,
+                gameEventChoice3,
+                GameEventDefinitionRequirementType.HAS_NOT_HAPPENED);
+        gameEventRequirementFutureEvent2 = gameEventDefinitionRequirementService.saveGameEventRequirement(gameEventRequirementFutureEvent2);
+
+        System.out.println("Define requirements for future events");
+
+        // DONE
+        System.out.println("\n");
     }
 
     public void createSampleEventStoryData() {

@@ -48,7 +48,7 @@ public class GameEventController {
     @Autowired 
     GameEventChoiceService gameEventChoiceService;
     
-	@GetMapping("/")
+	@GetMapping("/next")
 	@PreAuthorize("hasRole('PLAYER') or hasRole('MODERATOR') or hasRole('ADMIN')")
 	public EventRequestResponse getOrCreate(@ApiIgnore @AuthenticationPrincipal SurvCovidUserDetails userDetails,
 											@RequestParam(name="user_id", required=true)long userId,
@@ -62,10 +62,13 @@ public class GameEventController {
 		// Check if the user is an admin
 		if(!userDetails.getAuthorities().contains(RoleName.ROLE_ADMIN)) {
 			System.out.println("[DEBUG] User is not an admin");
-			// If the user is not an admin, check if he try to access his own inventory
+			// If the user is not an admin, check if he tries to access his own events
 			if (userDetails.getId() != userId) {
-				System.out.println("[DEBUG] User is not an admin and tries to fetch a job for another user!");
-				// The user try to access another user's inventory => we do not allow this
+				System.out.println("[DEBUG] User {id: "+userDetails.getId()+", "
+								 + "Name: " + userDetails.getUsername() + ", "
+						         + "Authorities: "+ userDetails.getAuthorities()
+								 + "} is not an admin and tries to fetch a job for another user (with id: "+userId+")!");
+				// The user tries to access another user's events => we do not allow this
 				// Set HTTP status "401 Unauthorized"
 				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 				return null;
@@ -97,7 +100,7 @@ public class GameEventController {
 				nextGameEvent = gameEventManager.initiateNewGameEvent(player.get());
 				// If there was no exception, a next event was created => HTTP code 201
 				response.setStatus(HttpServletResponse.SC_CREATED);
-				return new EventRequestResponse("Created new event for user.", nextGameEvent)
+				return new EventRequestResponse("Created new event for user.", nextGameEvent);
 			}
 			catch(NoEventsAvailableException ex) {
 				// Could not initiate a new game event, so we return none... => HTTP code 500
@@ -110,7 +113,7 @@ public class GameEventController {
 		return new EventRequestResponse("There already is an open event for this user.", nextGameEvent);
 	}
 	
-	@PutMapping("/")
+	@PutMapping("/next")
 	@PreAuthorize("hasRole('PLAYER') or hasRole('MODERATOR') or hasRole('ADMIN')")
 	public SurvCovidBaseResponse respond(@ApiIgnore @AuthenticationPrincipal SurvCovidUserDetails userDetails,
 										 @RequestParam(name="user_id", required = true) long userId,
@@ -126,10 +129,10 @@ public class GameEventController {
 		// Check if the user is an admin
 		if(!userDetails.getAuthorities().contains(RoleName.ROLE_ADMIN)) {
 			System.out.println("[DEBUG] User is not an admin");
-			// If the user is not an admin, check if he try to access his own inventory
+			// If the user is not an admin, check if he try to access his own events
 			if (userDetails.getId() != userId) {
 				System.out.println("[DEBUG] User is not an admin and tries to fetch a job for another user!");
-				// The user try to access another user's inventory => we do not allow this
+				// The user tries to access another user's events => we do not allow this
 				// Set HTTP status "401 Unauthorized"
 				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 				return null;

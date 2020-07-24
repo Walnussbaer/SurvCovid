@@ -28,7 +28,15 @@ public class GameEventDefinitionRequirementService {
 
     }
 
+    public GameEventRequirement saveGameEventRequirement(GameEventRequirement gameEventRequirement) {
 
+        if (gameEventRequirement == null) {
+            throw new NullPointerException("gameEventRequirement cannot be null");
+        }
+        this.gameEventRequirementRepository.save(gameEventRequirement);
+
+        return gameEventRequirement;
+    }
 
 //    public List<GameEventRequirement> getRequirementsForGameEventDefinition(GameEventDefinition gameEventDefinition) {
 //        return this.gameEventRequirementRepository.findByGameEventDefinition(gameEventDefinition);

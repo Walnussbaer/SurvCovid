@@ -74,6 +74,7 @@ public class SurvCovidApplication {
 			startupUtils.createSampleEventData();
 			startupUtils.createSampleInventoryData();
 			startupUtils.createSampleShopData();
+			startupUtils.createSampleEventFlowData();
 
 
 			// Add Activities
