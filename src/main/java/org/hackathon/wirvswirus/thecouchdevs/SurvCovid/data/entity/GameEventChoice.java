@@ -34,8 +34,12 @@ public class GameEventChoice {
 	
 	@ManyToMany(mappedBy = "gameEventChoices")
 	@JsonBackReference
-	private List<GameEventDefinition> gameEventDefinitions; 
-	
+	private List<GameEventDefinition> gameEventDefinitions;
+
+    public GameEventChoice(String description) {
+        this.description = description;
+    }
+
 	public GameEventChoice(String description, List<GameEventDefinition> gameEventDefinitions) {
 	    this.description = description;
 	    this.gameEventDefinitions = gameEventDefinitions;

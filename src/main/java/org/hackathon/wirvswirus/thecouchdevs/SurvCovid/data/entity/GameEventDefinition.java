@@ -106,7 +106,7 @@ public class GameEventDefinition {
         this.gameEventChoices = gameEventChoices;
     }
     
-    public List<GameEventChoice> getGameEventChocies(){
+    public List<GameEventChoice> getGameEventChoices(){
         return this.gameEventChoices;
     }
 
