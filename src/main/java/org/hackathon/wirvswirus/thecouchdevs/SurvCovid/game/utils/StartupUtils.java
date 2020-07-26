@@ -65,7 +65,7 @@ public class StartupUtils {
             user.setUserState(new UserState(true));
             user.setGameState(new GameState());
 
-            userService.saveUser(user);
+            userService.saveUser(user,null);
         }
        
 
@@ -92,7 +92,7 @@ public class StartupUtils {
 
         adminRoles.add(role);
         admin.setRoles(adminRoles);
-        userService.saveUser(admin);
+        userService.saveUser(admin,null);
 
         System.out.println("Admin test user got created!");
 

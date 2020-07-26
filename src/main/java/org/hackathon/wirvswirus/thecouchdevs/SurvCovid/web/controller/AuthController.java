@@ -167,7 +167,8 @@ public class AuthController {
         user.setRoles(roles);
         
         try {
-        	userService.saveUser(user);
+        	// BindingResult ist not needed here anymore
+        	userService.saveUser(user, null);
         } 
         catch (NoValidUserException nvue) {
         	// if the user object is not valid, it cannot be created and an error message is returned

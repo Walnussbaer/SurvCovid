@@ -8,12 +8,13 @@ import javax.validation.Valid;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.User;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.exception.NoValidUserException;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.exception.UserNotExistingException;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.request.UserUpdateRequest;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -74,14 +75,14 @@ public class UserController {
 	 * @return the created user inside an HTTP response if the request was successful, else an error message
 	 */
 	@PostMapping
-	public ResponseEntity<?> create(@RequestBody @Valid final User user) {
+	public ResponseEntity<?> create(@RequestBody @Valid final User user, BindingResult bindingResult) {
 	    
 	    long userId;
 	    
 	    User createdUser;
 	    
 	    try {
-	        createdUser = userService.saveUser(user);
+	        createdUser = userService.saveUser(user,bindingResult);
 	    }
 	    catch (NoValidUserException nvue) {
 	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The given user object is not valid!");
@@ -106,5 +107,30 @@ public class UserController {
 		}
 		
 		return ResponseEntity.ok("The user has been deleted!");
+	}
+	
+
+	/**
+	 * Takes in a user object from the HTTP request and updates the user in the database if the user is existing - else returns an error message. 
+	 * 
+	 * @param user - the user which shall be updated
+	 * @return an HTTP reponse with the updatet user or an error message if the operation was not successfull
+	 */
+	@RequestMapping(method = RequestMethod.PUT)
+	public ResponseEntity<?> update(@RequestBody @Valid UserUpdateRequest userUpdate, BindingResult bindingResult) {
+		
+		User userInDatbase;
+					
+		try {
+			userInDatbase = userService.updateUser(userUpdate, bindingResult);
+		} 
+		catch (NoValidUserException nvue) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(nvue.getMessage());
+		} 
+		catch (UserNotExistingException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("This is not a possible upate!");
+		}
+		
+		return ResponseEntity.ok(userInDatbase);
 	}
 }

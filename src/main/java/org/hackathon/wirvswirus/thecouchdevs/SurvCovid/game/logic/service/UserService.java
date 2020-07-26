@@ -6,14 +6,19 @@ import java.util.Optional;
 
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.User;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.UserState;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.exception.NoActionRequiredException;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.exception.NoValidUserException;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.exception.UserNotExistingException;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.request.UserUpdateRequest;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.response.GameState;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.validation.UserValidator;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
+
+import com.google.gson.Gson;
 
 @Service
 public class UserService {
@@ -35,10 +40,10 @@ public class UserService {
 		this.userRepository = userRepository;
 	}
 	
-	public User saveUser(User user) throws NoValidUserException {
+	public User saveUser(User user, BindingResult bindingResult) throws NoValidUserException {
 		
 		// throws a NoValidUserException back to the caller
-		userValidator.validateUser(user);
+		userValidator.validateNewUser(user, bindingResult);
 		
 		// hash the password
 		user.setPassword(encoder.encode(user.getPassword()));
@@ -51,28 +56,90 @@ public class UserService {
 		return user;
 	}
 	
+	public User updateUser(UserUpdateRequest userUpdate, BindingResult bindingResult) throws NoValidUserException, UserNotExistingException {
+				
+		User existingUser;
+		User potentialUpdatedUser;
+		User updatedUser;
+		
+		// throws a UserNotExistingException if user cannot be found
+		existingUser = this.getUserById(userUpdate.getUserId());
+			
+		// map incoming data to existing user object
+		try {
+			potentialUpdatedUser = this.mapUserUpdateToExistingUser(userUpdate, existingUser);
+		}
+		catch (NoActionRequiredException nare) {
+			System.out.println("Update requested but data did not change. Returning existing user from database ... ");
+			return existingUser;
+		}
+		
+		// throws a NoValidUserException to the caller if the update is not valid
+		this.userValidator.validateUserUpdate(potentialUpdatedUser, userUpdate, existingUser, bindingResult);
+			
+			
+		updatedUser = this.userRepository.save(potentialUpdatedUser);
+
+		
+		return updatedUser;
+		
+	}
+	
+	private User mapUserUpdateToExistingUser(UserUpdateRequest userUpdate, User existingUser) throws NoActionRequiredException {
+		
+		int updateCount = 0;
+		
+		Gson gson = new Gson();
+		
+		// create a deep copy of the object
+		User potentialUpdatedUser = gson.fromJson(gson.toJson(existingUser), User.class);
+		
+		System.out.println(userUpdate.getUserName());
+		System.out.println(existingUser.getUserName());
+		
+		if (userUpdate.getUserName() != null && !(userUpdate.getUserName().isEmpty()) && !userUpdate.getUserName().equals(existingUser.getUserName())) {
+			System.out.println("test");
+			updateCount+=1;
+			potentialUpdatedUser.setUserName(userUpdate.getUserName());
+		}
+		
+		if (userUpdate.getEmail() != null && !userUpdate.getEmail().isEmpty() && !userUpdate.getEmail().equals(existingUser.getEmail())) {
+			updateCount+=1;
+			potentialUpdatedUser.setEmail(userUpdate.getEmail());
+		}
+		
+		if (userUpdate.getPassword() != null && !userUpdate.getPassword().isEmpty()) {
+			updateCount+=1;
+			potentialUpdatedUser.setPassword(encoder.encode(userUpdate.getPassword()));
+		}
+		
+		if (userUpdate.getRoles() != null && userUpdate.getRoles().isEmpty()) {
+			updateCount+=1;
+			potentialUpdatedUser.setRoles(userUpdate.getRoles());
+		}
+		
+		if (userUpdate.getUserState() != null) {
+			updateCount+=1;
+			potentialUpdatedUser.setUserState(userUpdate.getUserState());
+		}
+		
+		if (userUpdate.getGameState() != null) {
+			updateCount+=1;
+			potentialUpdatedUser.setGameState(userUpdate.getGameState());
+		}
+		
+		if (updateCount == 0) {
+			throw new NoActionRequiredException("Nothing happened!");
+		}
+		
+		return potentialUpdatedUser;
+		
+	}
+	
 	public List<User> getAllUsers(){
 		
 		List<User> users = (List<User>) this.userRepository.findAll(); 
 		return users;
-	}
-	
-	/**
-	 * Searchs for a user with the given id and returns the user object if the user ist present. 
-	 * 
-	 * @param id - the id of the user to use for the search
-	 * @return - an instance of {@link User}
-	 * @throws - a UserNotExistingException if the user is not existing
-	 */
-	public User getUserById(long id) throws UserNotExistingException {
-		
-		Optional<User> user = this.userRepository.findById(id);
-		
-		if( user.isEmpty()) {
-			throw new UserNotExistingException("There is no user with userId " + id);
-		}		
-		
-		return user.get();		
 	}
 	
 	/**
@@ -172,7 +239,36 @@ public class UserService {
 		}
 		
 		return user.get();
-
+	}
+	
+	/**
+	 * Searchs for a user with the given id and returns the user object if the user ist present. 
+	 * 
+	 * @param id - the id of the user to use for the search
+	 * @return - an instance of {@link User}
+	 * @throws - a UserNotExistingException if the user is not existing
+	 */
+	public User getUserById(long id) throws UserNotExistingException {
+		
+		Optional<User> user = this.userRepository.findById(id);
+		
+		if( user.isEmpty()) {
+			throw new UserNotExistingException("There is no user with userId " + id);
+		}		
+		
+		return user.get();		
+	}
+	
+	public User getUserByMail(String mail) throws UserNotExistingException {
+		
+		Optional<User> user = this.userRepository.findByEmail(mail);
+		
+		if (user.isEmpty()) {
+			throw new UserNotExistingException("There is not user with email " + mail);
+		}
+		
+		return user.get();
+		
 	}
 
 }
