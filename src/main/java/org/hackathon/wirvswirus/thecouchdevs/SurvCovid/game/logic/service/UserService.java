@@ -4,13 +4,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.GameState;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.User;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.UserState;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.exception.NoActionRequiredException;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.exception.NoValidUserException;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.exception.UserNotExistingException;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.request.UserUpdateRequest;
-import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.response.GameState;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.validation.UserValidator;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,11 +94,7 @@ public class UserService {
 		// create a deep copy of the object
 		User potentialUpdatedUser = gson.fromJson(gson.toJson(existingUser), User.class);
 		
-		System.out.println(userUpdate.getUserName());
-		System.out.println(existingUser.getUserName());
-		
 		if (userUpdate.getUserName() != null && !(userUpdate.getUserName().isEmpty()) && !userUpdate.getUserName().equals(existingUser.getUserName())) {
-			System.out.println("test");
 			updateCount+=1;
 			potentialUpdatedUser.setUserName(userUpdate.getUserName());
 		}

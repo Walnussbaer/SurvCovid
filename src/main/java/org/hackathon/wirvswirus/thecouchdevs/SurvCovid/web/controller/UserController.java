@@ -154,6 +154,8 @@ public class UserController {
 		UserControllerResponse response = new UserControllerResponse();
 		
 		List<User> users = new ArrayList<User>();
+		
+		System.out.println("User State Object active field: " + userUpdate.getUserState().isActive());
 					
 		try {
 			userInDatbase = userService.updateUser(userUpdate, bindingResult);

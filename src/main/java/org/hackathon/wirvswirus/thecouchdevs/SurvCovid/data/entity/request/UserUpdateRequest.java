@@ -3,14 +3,16 @@ package org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.request;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.Embedded;
+import javax.persistence.OneToOne;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.GameState;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.Role;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.UserState;
-import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.response.GameState;
 
 /**
  * This class is used to represent data that updates an existing user record. 
@@ -36,14 +38,16 @@ public class UserUpdateRequest {
 	
 	private Set<Role> roles = new HashSet<>();
 	
+	@Valid
 	private UserState userState;
 	
+	@Valid
 	private GameState gameState;
 	
 	
-
-	public UserUpdateRequest(@NotNull long userId, String userName, String email, String password, Set<Role> roles,
-			UserState userState, GameState gameState) {
+	public UserUpdateRequest(@NotNull long userId, @Size(min = 1, max = 30) String userName, @Email String email,
+			@Size(min = 5, max = 120) String password, Set<Role> roles, @Valid @NotNull UserState userState,
+			@Valid GameState gameState) {
 		this.userId = userId;
 		this.userName = userName;
 		this.email = email;

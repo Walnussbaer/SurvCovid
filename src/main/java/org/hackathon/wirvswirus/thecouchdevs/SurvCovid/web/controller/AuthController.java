@@ -1,5 +1,6 @@
 package org.hackathon.wirvswirus.thecouchdevs.SurvCovid.web.controller;
 
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.GameState;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.Role;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.User;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.UserState;
@@ -8,7 +9,6 @@ import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.exception.NoV
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.exception.UserNotExistingException;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.request.LoginRequest;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.request.SignupRequest;
-import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.response.GameState;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.response.JwtResponse;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.response.MessageResponse;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.repository.RoleRepository;

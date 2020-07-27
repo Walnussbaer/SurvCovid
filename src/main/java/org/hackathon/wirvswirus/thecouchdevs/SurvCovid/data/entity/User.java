@@ -1,7 +1,5 @@
 package org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity;
 
-import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.response.GameState;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 

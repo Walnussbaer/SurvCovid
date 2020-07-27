@@ -1,4 +1,4 @@
-package org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.response;
+package org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
