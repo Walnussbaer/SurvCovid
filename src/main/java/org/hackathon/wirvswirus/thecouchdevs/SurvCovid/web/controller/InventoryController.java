@@ -15,6 +15,8 @@ import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service.Invent
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service.UserService;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.web.security.SurvCovidUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -43,9 +45,8 @@ public class InventoryController {
     @PreAuthorize("hasAnyRole('PLAYER', 'ADMIN')")
     @ApiOperation(value = "List inventory of a user.",
                   notes = "Lists the items in a user's inventory.")
-    public List<InventoryItem> getInventory(@ApiIgnore @AuthenticationPrincipal SurvCovidUserDetails userDetails,
-                                            @RequestParam(name="user_id", required=true)long userId,
-                                            HttpServletResponse response) {
+    public ResponseEntity<List<InventoryItem>> getInventory(@ApiIgnore @AuthenticationPrincipal SurvCovidUserDetails userDetails,
+                                                            @RequestParam(name="user_id", required=true)long userId) {
 
         System.out.println("[DEBUG] ##### Accessing user inventory endpoint to LIST ITEMS.");
         System.out.println("[DEBUG] Authorities: ");
@@ -62,8 +63,7 @@ public class InventoryController {
                 System.out.println("[DEBUG] User is not an admin and tries to access another user's inventory!");
                 // The user try to access another user's inventory => we do not allow this
                 // Set HTTP status "401 Unauthorized"
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                return null;
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
             }
         }
 
@@ -74,15 +74,13 @@ public class InventoryController {
         try {
         	player = userService.getUserById(userId);
         } catch (UserNotExistingException unee) {
-        	response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        	return null;
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
 
         System.out.println("Received request for inventory of user " + player.getUserName());
 
         // Set HTTP status "200 OK"
-        response.setStatus(HttpServletResponse.SC_OK);
-        return inventoryService.getInventory(player);
+        return ResponseEntity.status(HttpStatus.OK).body(inventoryService.getInventory(player));
     }
 
 
@@ -91,9 +89,8 @@ public class InventoryController {
     @ApiOperation(value = "Buy items for a user.",
                   notes = "Buy items from the user's shop and put them into his inventory. "
                           + "This requires the user's shop's stock to be requested using the shop endpoint before.")
-    public ItemBuyResponse buyItems(@ApiIgnore @AuthenticationPrincipal SurvCovidUserDetails userDetails,
-                                    @Valid @RequestBody ItemBuyRequest itemBuyRequest,
-                                    HttpServletResponse response) {
+    public ResponseEntity<ItemBuyResponse> buyItems(@ApiIgnore @AuthenticationPrincipal SurvCovidUserDetails userDetails,
+                                    @Valid @RequestBody ItemBuyRequest itemBuyRequest) {
 
         System.out.println("[DEBUG] ##### Accessing user inventory endpoint to BUY ITEMS.");
         System.out.println("[DEBUG] Authorities: ");
@@ -110,8 +107,7 @@ public class InventoryController {
                 System.out.println("[DEBUG] User is not an admin and tries to access another user's inventory!");
                 // The user try to access another user's inventory => we do not allow this
                 // Set HTTP status "401 Unauthorized"
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                return null;
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
             }
         }
 
@@ -127,8 +123,7 @@ public class InventoryController {
         } catch (UserNotExistingException unee) {
             System.err.println("Could not retrieve user by id '" + itemBuyRequest.getUserId() + "'");
             // Set HTTP status "401 Unauthorized"
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return null;
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
        
 
@@ -157,10 +152,10 @@ public class InventoryController {
             ex1.printStackTrace();
 
             // Set HTTP status "500 Internal Server Error"
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.setHeader("X-UserMessage",
-                    "An internal error occurred. We are really sorry, please try again later...");
-            return null;
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .header("X-UserMessage",
+                            "An internal error occurred. We are really sorry, please try again later...")
+                    .body(null);
         }
 
         if(!success) {
@@ -170,16 +165,17 @@ public class InventoryController {
                     + "\n  ItemAmount: " + itemBuyRequest.getItemAmount());
 
             // Set HTTP status "403 Forbidden"
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            return new ItemBuyResponse("Could not buy the requested items because they are not available in the shop.",
-                    ItemBuyStatus.INSUFFICIENT_STOCK);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+                    new ItemBuyResponse(
+                            "Could not buy the requested items because they are not available in the shop.",
+                            ItemBuyStatus.INSUFFICIENT_STOCK));
         }
 
         // Buying items was successful
         // Set HTTP status "200 OK"
-        response.setStatus(HttpServletResponse.SC_OK);
-        return new ItemBuyResponse("Bought items.",
-                ItemBuyStatus.SUCCESS);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new ItemBuyResponse("Bought items.",
+                ItemBuyStatus.SUCCESS));
     }
 
 }

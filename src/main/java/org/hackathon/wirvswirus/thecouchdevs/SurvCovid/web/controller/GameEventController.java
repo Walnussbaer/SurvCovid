@@ -19,6 +19,8 @@ import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service.GameEv
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service.UserService;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.web.security.SurvCovidUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,9 +53,8 @@ public class GameEventController {
     
 	@GetMapping("/next")
 	@PreAuthorize("hasRole('PLAYER') or hasRole('MODERATOR') or hasRole('ADMIN')")
-	public EventRequestResponse getOrCreate(@ApiIgnore @AuthenticationPrincipal SurvCovidUserDetails userDetails,
-											@RequestParam(name="user_id", required=true)long userId,
-											HttpServletResponse response) {
+	public ResponseEntity<EventRequestResponse> getOrCreate(@ApiIgnore @AuthenticationPrincipal SurvCovidUserDetails userDetails,
+											@RequestParam(name="user_id", required=true)long userId) {
 		// HTTP status codes
 		//   200 - Open event returned
 		//   201 - New event created and returned
@@ -71,10 +72,9 @@ public class GameEventController {
 								 + "} is not an admin and tries to fetch a job for another user (with id: "+userId+")!");
 				// The user tries to access another user's events => we do not allow this
 				// Set HTTP status "401 Unauthorized"
-				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-				return null;
-			}
-		}
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+            }
+        }
 
 		gameEventManager = gameManager.getGameEventManager();
 	    
@@ -87,12 +87,11 @@ public class GameEventController {
 	    
 	    try {
 	    	player = userService.getUserById(userId);
-	    } 
+        }
 	    catch (UserNotExistingException unee) {
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-	    	return null;
-	    	//TODO: implement proper error handling
-	    }
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+            //TODO: implement proper error handling
+        }
 
 		 EventRequestResponse eventRequestResponse = null;
 
@@ -102,27 +101,23 @@ public class GameEventController {
 			try {
 				nextGameEvent = gameEventManager.initiateNewGameEvent(player);
 				// If there was no exception, a next event was created => HTTP code 201
-				response.setStatus(HttpServletResponse.SC_CREATED);
-				return new EventRequestResponse("Created new event for user.", nextGameEvent);
-			}
-			catch(NoEventsAvailableException ex) {
-				// Could not initiate a new game event, so we return none... => HTTP code 500
-				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-				return new EventRequestResponse("Could not instantiate a new event for this user. The player did not meet the requirements for any event definition.", null);
-			}
-	    }
+                return ResponseEntity.status(HttpStatus.CREATED).body(new EventRequestResponse("Created new event for user.", nextGameEvent));
+            }
+			catch (NoEventsAvailableException ex) {
+                // Could not initiate a new game event, so we return none... => HTTP code 500
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new EventRequestResponse("Could not instantiate a new event for this user. The player did not meet the requirements for any event definition.", null));
+            }
+        }
 
-		response.setStatus(HttpServletResponse.SC_OK);
-		return new EventRequestResponse("There already is an open event for this user.", nextGameEvent);
-	}
-	
-	@PutMapping("/next")
-	@PreAuthorize("hasRole('PLAYER') or hasRole('MODERATOR') or hasRole('ADMIN')")
-	public SurvCovidBaseResponse respond(@ApiIgnore @AuthenticationPrincipal SurvCovidUserDetails userDetails,
-										 @RequestParam(name="user_id", required = true) long userId,
-										 @RequestParam(name="game_event_id", required=true) long gameEventId,
-										 @RequestParam(name="choice_id", required = true) long choiceId,
-										 HttpServletResponse response) {
+        return ResponseEntity.status(HttpStatus.OK).body(new EventRequestResponse("There already is an open event for this user.", nextGameEvent));
+    }
+
+    @PutMapping("/next")
+    @PreAuthorize("hasRole('PLAYER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    public ResponseEntity<SurvCovidBaseResponse> respond(@ApiIgnore @AuthenticationPrincipal SurvCovidUserDetails userDetails,
+                                                         @RequestParam(name = "user_id", required = true) long userId,
+                                                         @RequestParam(name = "game_event_id", required = true) long gameEventId,
+                                                         @RequestParam(name = "choice_id", required = true) long choiceId) {
 
 		// HTTP status codes
 		//   200 - Choice registered
@@ -137,10 +132,9 @@ public class GameEventController {
 				System.out.println("[DEBUG] User is not an admin and tries to fetch a job for another user!");
 				// The user tries to access another user's events => we do not allow this
 				// Set HTTP status "401 Unauthorized"
-				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-				return null;
-			}
-		}
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+            }
+        }
 	    
 	    GameEvent nextGameEvent = null;
 	    GameEventChoice gameEventChoice = null;
@@ -152,8 +146,6 @@ public class GameEventController {
 	    	player = userService.getUserById(userId);
 	    } 
 	    catch (UserNotExistingException unee) {
-        	response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-	    	return null;
 	    	//TODO: implement proper error handling
 	    }
 	    
@@ -164,22 +156,19 @@ public class GameEventController {
 		GameEvent openEvent = gameEventManager.getOpenGameEvent(player);
 		if(openEvent.getId() != gameEventId) {
 			// The user tried to respond to another event
-			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-			return new SurvCovidBaseResponse("Could not register choice since the provided event does not match the event currently open for this user.");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new SurvCovidBaseResponse("Could not register choice since the provided event does not match the event currently open for this user."));
 		}
 
 	    // Ensure that the user's choice was possible for the event
 	    if(!gameEventManager.isPossibleChoice(gameEventId, choiceId)) {
-			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-			return new SurvCovidBaseResponse("Could not register choice since the provided choice is not valid for the provided event.");
-		}
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new SurvCovidBaseResponse("Could not register choice since the provided choice is not valid for the provided event."));
+        }
 
 	    nextGameEvent.setChosenChoice(gameEventChoice);
 	    nextGameEvent.setDone(true);
 	    gameEventService.saveGameEvent(nextGameEvent);
 
-		  response.setStatus(HttpServletResponse.SC_OK);
-	    return new SurvCovidBaseResponse("Your choice was registered, the event is over!");
+		return ResponseEntity.status(HttpStatus.OK).body(new SurvCovidBaseResponse("Your choice was registered, the event is over!"));
 
 	}
 
