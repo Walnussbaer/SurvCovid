@@ -147,6 +147,7 @@ public class GameEventController {
 	    } 
 	    catch (UserNotExistingException unee) {
 	    	//TODO: implement proper error handling
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
 	    }
 	    
 	    nextGameEvent = gameEventService.getGameEventById(gameEventId);
