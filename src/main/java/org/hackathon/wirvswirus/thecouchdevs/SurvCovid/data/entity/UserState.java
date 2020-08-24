@@ -16,14 +16,14 @@ public class UserState {
 
     @Column(name="IS_ACTIVE")
     @NotNull
-    private boolean isActive;
+    private boolean active;
     
     public UserState() {}
 
 
-    public UserState(boolean isActive) {
+    public UserState(boolean active) {
 
-        this.isActive = isActive;
+        this.active = active;
 
     }
 
@@ -33,10 +33,10 @@ public class UserState {
 
     } 
 
-    public UserState(LocalDateTime lastLogin, @NotNull boolean isActive) {
+    public UserState(LocalDateTime lastLogin, @NotNull boolean active) {
     	
 		this.lastLogin = lastLogin;
-		this.isActive = isActive;
+		this.active = active;
 		
 	}
 
@@ -49,10 +49,10 @@ public class UserState {
     }
 
     public boolean isActive() {
-        return isActive;
+        return active;
     }
 
-    public void setIsActive(boolean isActive) {
-        this.isActive = isActive;
+    public void setIsActive(boolean active) {
+        this.active = active;
     }
 }
