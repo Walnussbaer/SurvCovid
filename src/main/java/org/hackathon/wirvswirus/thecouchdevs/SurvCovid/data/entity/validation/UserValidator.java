@@ -9,13 +9,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
+import javax.annotation.Resource;
+
 @Service
 public class UserValidator {
-	
-	@Autowired
+
 	PasswordEncoder decoder;
-	
-	@Autowired
+
+	@Resource
 	private UserService userService;
 	
 	private static final String EMAIL_IN_USE = "This email is already is use, please provide another mail address!";
@@ -23,7 +24,7 @@ public class UserValidator {
 	private static final String USERNAME_IN_USE = "This username is already in use, please provide another username!";
 	
 	private static final String BINDING_FAILED = "We could not recognize the given input as valid user data!";
-	
+
 	/**
 	 * Validates a given user object and checks whether it can be persisted inside the database.
 	 * 
@@ -83,6 +84,9 @@ public class UserValidator {
 		}
 		
 	}
-	
+
+	public void setUserService(UserService userService) {
+		this.userService = userService;
+	}
 	
 }

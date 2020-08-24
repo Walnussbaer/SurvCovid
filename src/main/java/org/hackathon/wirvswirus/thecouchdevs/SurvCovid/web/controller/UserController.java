@@ -6,7 +6,9 @@ import java.util.Optional;
 
 import javax.validation.Valid;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.User;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.exception.NoActionRequiredException;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.exception.NoValidUserException;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.exception.UserNotExistingException;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.request.UserUpdateRequest;
@@ -168,8 +170,13 @@ public class UserController {
 		catch (UserNotExistingException e) {
 			response.setMessage("This is not a possible update!");
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+		} catch (NoActionRequiredException e) {
+			e.printStackTrace();
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 		}
-		
+
 		response.setData(users);
 		response.setMessage("Update was successful!");
 		
