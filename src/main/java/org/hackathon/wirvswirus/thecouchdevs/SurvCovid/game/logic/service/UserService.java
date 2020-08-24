@@ -116,6 +116,10 @@ public class UserService {
 			updateCount+=1;
 			potentialUpdatedUser.setPassword(encoder.encode(userUpdate.getPassword()));
 		}
+		else {
+			// If not new password was provided, set the old one
+			potentialUpdatedUser.setPassword(existingUser.getPassword());
+		}
 		
 		if (userUpdate.getRoles() != null && userUpdate.getRoles().isEmpty()) {
 			updateCount+=1;
