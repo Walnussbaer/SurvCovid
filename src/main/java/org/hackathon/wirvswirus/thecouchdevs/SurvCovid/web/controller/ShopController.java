@@ -9,6 +9,8 @@ import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.manager.subman
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service.*;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.web.security.SurvCovidUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -38,9 +40,8 @@ public class ShopController {
 	@PreAuthorize("hasAnyRole('PLAYER', 'ADMIN')")
 	@ApiOperation(value = "List stock of a user's shop.",
 			      notes = "Lists the items that are available in the shop for a specific user.")
-	public List<ShopItem> getShopStock(@ApiIgnore @AuthenticationPrincipal SurvCovidUserDetails userDetails,
-									   @RequestParam(name="user_id", required=true)long userId,
-									   HttpServletResponse response) {
+	public ResponseEntity<List<ShopItem>> getShopStock(@ApiIgnore @AuthenticationPrincipal SurvCovidUserDetails userDetails,
+													   @RequestParam(name="user_id", required=true)long userId) {
 		
 		User player;
 
@@ -59,8 +60,7 @@ public class ShopController {
 				System.out.println("[DEBUG] User is not an admin and tries to access another user's shop stock!");
 				// The user try to access another user's inventory => we do not allow this
 				// Set HTTP status "401 Unauthorized"
-				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-				return null;
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
 			}
 		}
 
@@ -70,16 +70,14 @@ public class ShopController {
 			player = userService.getUserById(userId);
 		} 
 		catch (UserNotExistingException unee) {
-			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-	        return null;
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
 		}
 
 		ShopManager shopManager = gameManager.getShopManager();
 
 		if (shopManager == null) {
 			// Set HTTP status "500 Internal Server Error"
-			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			return null;
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
 
 	    List<ShopItem> shopItems = shopManager.getOrCreateShopStock(player);
@@ -89,8 +87,8 @@ public class ShopController {
 	        return null;
 	        // TODO implement proper error handling
 	    }
-	   
-		return shopItems;
+
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(shopItems);
 	}
 
 }

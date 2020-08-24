@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.GameState;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.User;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.UserState;
@@ -17,8 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
-
-import com.google.gson.Gson;
 
 @Service
 public class UserService {
@@ -56,7 +56,7 @@ public class UserService {
 		return user;
 	}
 	
-	public User updateUser(UserUpdateRequest userUpdate, BindingResult bindingResult) throws NoValidUserException, UserNotExistingException {
+	public User updateUser(UserUpdateRequest userUpdate, BindingResult bindingResult) throws NoValidUserException, UserNotExistingException, JsonProcessingException, NoActionRequiredException {
 				
 		User existingUser;
 		User potentialUpdatedUser;
@@ -69,7 +69,7 @@ public class UserService {
 		try {
 			potentialUpdatedUser = this.mapUserUpdateToExistingUser(userUpdate, existingUser);
 		}
-		catch (NoActionRequiredException nare) {
+		catch (NoActionRequiredException e) {
 			System.out.println("Update requested but data did not change. Returning existing user from database ... ");
 			return existingUser;
 		}
@@ -85,15 +85,23 @@ public class UserService {
 		
 	}
 	
-	private User mapUserUpdateToExistingUser(UserUpdateRequest userUpdate, User existingUser) throws NoActionRequiredException {
+	private User mapUserUpdateToExistingUser(UserUpdateRequest userUpdate, User existingUser) throws NoActionRequiredException, JsonProcessingException {
 		
 		int updateCount = 0;
-		
-		Gson gson = new Gson();
-		
+
 		// create a deep copy of the object
-		User potentialUpdatedUser = gson.fromJson(gson.toJson(existingUser), User.class);
-		
+		ObjectMapper mapper = new ObjectMapper();
+		User potentialUpdatedUser = null;
+
+		try {
+			potentialUpdatedUser = mapper.readValue(mapper.writeValueAsString(existingUser), User.class);
+		}
+		catch(JsonProcessingException ex) {
+			// Should not happen since we serialize and deserialize
+			System.err.println("This should not have happened!");
+			throw ex;
+		}
+
 		if (userUpdate.getUserName() != null && !(userUpdate.getUserName().isEmpty()) && !userUpdate.getUserName().equals(existingUser.getUserName())) {
 			updateCount+=1;
 			potentialUpdatedUser.setUserName(userUpdate.getUserName());
