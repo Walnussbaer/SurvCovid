@@ -1,9 +1,13 @@
 package org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.GameEvent;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.GameEventChoice;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.GameEventDefinition;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.dto.GameEventChoiceDTO;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.repository.GameEventChoiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,6 +51,20 @@ public class GameEventChoiceService {
         
         return gameEventChoice.get();
         
+    }
+
+    public List<GameEventChoiceDTO> getGameEventChoiceDTOsByGameEventDefinition(GameEventDefinition gameEventDefinition) {
+
+        List<GameEventChoice> choices = this.gameEventChoiceRepository.findByGameEventDefinitionsContains(gameEventDefinition);
+
+        List<GameEventChoiceDTO> choiceDTOS = new ArrayList<>();
+
+        for(GameEventChoice choice: choices) {
+            choiceDTOS.add(
+                    new GameEventChoiceDTO(choice.getId(), choice.getDescription(), choice.getData()));
+        }
+
+        return choiceDTOS;
     }
 
 }

@@ -1,11 +1,17 @@
 package org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.GameEventChoice;
+import com.google.common.collect.Lists;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.GameEventDefinition;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.User;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.dto.GameEventChoiceDTO;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.dto.GameEventDefinitionDTO;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.dto.GameEventDefinitionWithRequirementsAndChoicesDTO;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.dto.GameEventRequirementDTO;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.repository.GameEventChoiceRepository;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.repository.GameEventDefinitionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +21,12 @@ public class GameEventDefinitionService {
 	
 	@Autowired 
 	GameEventDefinitionRepository gameEventDefinitionRepository;
+
+	@Autowired
+	GameEventDefinitionRequirementService gameEventDefinitionRequirementService;
+
+	@Autowired
+	GameEventChoiceService gameEventChoiceService;
 	
 	@Autowired
 	public GameEventDefinitionService(GameEventDefinitionRepository gameEventDefinitionRepository) {
@@ -66,6 +78,34 @@ public class GameEventDefinitionService {
 		return this.gameEventDefinitionRepository.findPossibleEventsForPlayer(userId);
 	}
 
-	
+	public List<GameEventDefinition> getAll() {
+		return Lists.newArrayList(gameEventDefinitionRepository.findAll());
+	}
+
+	public List<GameEventDefinitionWithRequirementsAndChoicesDTO> getAllWithRequirementsDTOs() {
+		// Native definitions
+		List<GameEventDefinition> gameEventDefinitions = Lists.newArrayList(gameEventDefinitionRepository.findAll());
+
+		// Create custom DTO list to be able to attache the requirements
+		List<GameEventDefinitionWithRequirementsAndChoicesDTO> gameEventDefinitionWithRequirementsAndChoicesDTOS = new ArrayList<>();
+
+		for(GameEventDefinition gameEventDefinition: gameEventDefinitions) {
+
+			// Fetch list of requirementDTOs (contains normal requirement data plus shortTitle of required event and description of choice)
+			List<GameEventRequirementDTO> requirementDTOS = gameEventDefinitionRequirementService.getRequirementDTOsForGameEventDefinition(gameEventDefinition);
+
+			// Fetch list of choicesDTOs
+			List<GameEventChoiceDTO> choicesDTOs = gameEventChoiceService.getGameEventChoiceDTOsByGameEventDefinition(gameEventDefinition);
+
+			// Create GameEventDefinitionWithRequirementsAndChoicesDTO
+			gameEventDefinitionWithRequirementsAndChoicesDTOS.add(
+					new GameEventDefinitionWithRequirementsAndChoicesDTO(
+							GameEventDefinitionDTO.fromGameEventDefinition(gameEventDefinition),
+							requirementDTOS,
+							choicesDTOs));
+		}
+
+		return gameEventDefinitionWithRequirementsAndChoicesDTOS;
+	}
 
 }

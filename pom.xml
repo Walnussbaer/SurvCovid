@@ -68,6 +68,11 @@
 			<artifactId>jjwt</artifactId>
 			<version>0.9.1</version>
 		</dependency>
+		<!-- Lombok is used for easier data container classes, projections, improved logging, easier testing, ... -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+		</dependency>
 
 		<!-- API-Docs -->
 		<!-- Swagger Configuration (API Documentation) without springfox (old)-->
@@ -95,6 +100,16 @@
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 		    <artifactId>gson</artifactId>
+		</dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
 		</dependency>
 
 	</dependencies>

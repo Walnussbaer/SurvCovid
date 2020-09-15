@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.dto.GameEventChoiceDTO;
 
 @Entity
 @Table(name="GAME_EVENT_CHOICE")
@@ -38,6 +39,11 @@ public class GameEventChoice {
 
     public GameEventChoice(String description) {
         this.description = description;
+    }
+
+    public GameEventChoice(String description, String data) {
+        this.description = description;
+        this.data = data;
     }
 
 	public GameEventChoice(String description, List<GameEventDefinition> gameEventDefinitions) {
@@ -89,6 +95,9 @@ public class GameEventChoice {
     public void setGameEventDefinitions(List<GameEventDefinition> gameEventDefinitions) {
         this.gameEventDefinitions = gameEventDefinitions;
     }
-	
+
+    public static GameEventChoice fromDTO(GameEventChoiceDTO choiceDTO) {
+        return new GameEventChoice(choiceDTO.getDescription(), choiceDTO.getData());
+    }
 
 }

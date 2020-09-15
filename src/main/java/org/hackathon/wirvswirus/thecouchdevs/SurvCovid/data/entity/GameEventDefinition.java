@@ -16,6 +16,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.JoinColumn;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.dto.GameEventDefinitionDTO;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.enumeration.GameEventDefinitionType;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -110,4 +112,9 @@ public class GameEventDefinition {
         return this.gameEventChoices;
     }
 
+    public static GameEventDefinition fromDTO(GameEventDefinitionDTO gameEventDefinitionDTO) {
+	    return new GameEventDefinition(gameEventDefinitionDTO.getDescription(),
+                gameEventDefinitionDTO.getShortTitle(),
+                gameEventDefinitionDTO.getGameEventDefinitionType());
+    }
 }

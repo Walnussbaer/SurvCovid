@@ -12,7 +12,7 @@ import java.util.List;
 @Repository
 public interface GameEventRequirementRepository extends CrudRepository<GameEventRequirement, Long> {
 
-//    List<GameEventRequirement> findByGameEventDefinition(GameEventDefinition gameEventDefinition);
+    List<GameEventRequirement> findByTargetGameEventDefinitionId(Long targetGameEventDefinitionId);
 //    List<GameEventRequirement> findByGameEventDefinitionAndType(GameEventDefinition gameEventDefinition,
 //                                                                GameEventDefinitionRequirementType gameEventDefinitionRequirementType);
 

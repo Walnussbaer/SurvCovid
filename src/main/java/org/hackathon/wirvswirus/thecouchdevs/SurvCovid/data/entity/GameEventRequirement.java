@@ -1,6 +1,7 @@
 package org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.dto.GameEventRequirementDTO;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.enumeration.GameEventDefinitionRequirementType;
 
 import javax.persistence.*;
@@ -109,5 +110,33 @@ public class GameEventRequirement {
 
     public GameEventDefinitionRequirementType getType() {
         return type;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public Long getTargetGameEventDefinitionId() {
+        return targetGameEventDefinitionId;
+    }
+
+    public void setTargetGameEventDefinitionId(Long targetGameEventDefinitionId) {
+        this.targetGameEventDefinitionId = targetGameEventDefinitionId;
+    }
+
+    public Long getRequiredGameEventDefinitionId() {
+        return requiredGameEventDefinitionId;
+    }
+
+    public void setRequiredGameEventDefinitionId(Long requiredGameEventDefinitionId) {
+        this.requiredGameEventDefinitionId = requiredGameEventDefinitionId;
+    }
+
+    public void setGameEventChoice(GameEventChoice gameEventChoice) {
+        this.gameEventChoice = gameEventChoice;
+    }
+
+    public void setType(GameEventDefinitionRequirementType type) {
+        this.type = type;
     }
 }
