@@ -1,6 +1,5 @@
 package org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.dto;
 
-import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.enumeration.GameEventDefinitionRequirementType;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.enumeration.GameEventDefinitionType;
 
 import java.util.List;
@@ -8,22 +7,22 @@ import java.util.List;
 public class GameEventDefinitionWithRequirementsAndChoicesDTO extends GameEventDefinitionDTO {
 
     private List<GameEventRequirementDTO> requirements;
-    private List<GameEventChoiceDTO> choices;
+    private List<GameEventChoiceDTO> gameEventChoices;
 
-    public GameEventDefinitionWithRequirementsAndChoicesDTO(String description, String shortTitle, GameEventDefinitionType gameEventDefinitionType) {
-        super(description, shortTitle, gameEventDefinitionType);
+    public GameEventDefinitionWithRequirementsAndChoicesDTO(Long id, String description, String shortTitle, GameEventDefinitionType gameEventDefinitionType) {
+        super(id, description, shortTitle, gameEventDefinitionType);
     }
 
-    public GameEventDefinitionWithRequirementsAndChoicesDTO(GameEventDefinitionDTO gameEventDefinitionDTO, List<GameEventRequirementDTO> requirements, List<GameEventChoiceDTO> choices) {
-        super(gameEventDefinitionDTO.getDescription(), gameEventDefinitionDTO.getShortTitle(), gameEventDefinitionDTO.getGameEventDefinitionType());
+    public GameEventDefinitionWithRequirementsAndChoicesDTO(GameEventDefinitionDTO gameEventDefinitionDTO, List<GameEventRequirementDTO> requirements, List<GameEventChoiceDTO> gameEventChoices) {
+        super(gameEventDefinitionDTO.getId(), gameEventDefinitionDTO.getDescription(), gameEventDefinitionDTO.getShortTitle(), gameEventDefinitionDTO.getGameEventDefinitionType());
         this.requirements = requirements;
-        this.choices = choices;
+        this.gameEventChoices = gameEventChoices;
     }
 
-    public GameEventDefinitionWithRequirementsAndChoicesDTO(String description, String shortTitle, GameEventDefinitionType gameEventDefinitionType, List<GameEventRequirementDTO> requirements, List<GameEventChoiceDTO> choices) {
-        super(description, shortTitle, gameEventDefinitionType);
+    public GameEventDefinitionWithRequirementsAndChoicesDTO(Long id, String description, String shortTitle, GameEventDefinitionType gameEventDefinitionType, List<GameEventRequirementDTO> requirements, List<GameEventChoiceDTO> gameEventChoices) {
+        super(id, description, shortTitle, gameEventDefinitionType);
         this.requirements = requirements;
-        this.choices = choices;
+        this.gameEventChoices = gameEventChoices;
     }
 
     public List<GameEventRequirementDTO> getRequirements() {
@@ -34,11 +33,11 @@ public class GameEventDefinitionWithRequirementsAndChoicesDTO extends GameEventD
         this.requirements = requirements;
     }
 
-    public List<GameEventChoiceDTO> getChoices() {
-        return choices;
+    public List<GameEventChoiceDTO> getGameEventChoices() {
+        return gameEventChoices;
     }
 
-    public void setChoices(List<GameEventChoiceDTO> choices) {
-        this.choices = choices;
+    public void setGameEventChoices(List<GameEventChoiceDTO> gameEventChoices) {
+        this.gameEventChoices = gameEventChoices;
     }
 }

@@ -62,6 +62,7 @@ public class GameEventDefinitionCreationServiceTest {
 
         // Prepare target game event definition we want to create using the creation service
         GameEventDefinitionDTO gameEventDefinitionTarget = new GameEventDefinitionDTO(
+                1001L,
                 "GameEventDefinition Target",
                 "GED-Target",
                 GameEventDefinitionType.STORY_EVENT);
