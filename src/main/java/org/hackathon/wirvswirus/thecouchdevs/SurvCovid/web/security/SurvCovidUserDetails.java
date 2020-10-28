@@ -31,10 +31,13 @@ public class SurvCovidUserDetails implements UserDetails {
 
     private LocalDateTime lastLogin;
 
+    private boolean isActiveAccount;
+
     private Collection<? extends GrantedAuthority> authorities;
 
     public SurvCovidUserDetails(Long id, String userName, String email, String password, LocalDateTime lastLogin,
-                                Collection<? extends GrantedAuthority> authorities){
+                                Collection<? extends GrantedAuthority> authorities,
+                                boolean isActiveAccount){
 
         this.id=id;
         this.userName=userName;
@@ -42,6 +45,7 @@ public class SurvCovidUserDetails implements UserDetails {
         this.password=password;
         this.lastLogin = lastLogin;
         this.authorities=authorities;
+        this.isActiveAccount = isActiveAccount;
 
     }
 
@@ -57,7 +61,8 @@ public class SurvCovidUserDetails implements UserDetails {
                 user.getEmail(),
                 user.getPassword(),
                 user.getUserState().getLastLogin(),
-                authorities);
+                authorities,
+                user.getUserState().isActive());
     }
 
     @Override
@@ -90,7 +95,12 @@ public class SurvCovidUserDetails implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+
+        if (this.isActiveAccount == true) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override

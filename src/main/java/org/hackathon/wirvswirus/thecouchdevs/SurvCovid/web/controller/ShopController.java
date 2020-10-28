@@ -88,7 +88,7 @@ public class ShopController {
 	        // TODO implement proper error handling
 	    }
 
-		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(shopItems);
+		return ResponseEntity.status(HttpStatus.OK).body(shopItems);
 	}
 
 }

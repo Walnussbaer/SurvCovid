@@ -64,8 +64,6 @@ public class AuthController {
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
-        User user;
-
         String loginRequestUserName;
         String loginRequestPassword;
 
@@ -85,20 +83,22 @@ public class AuthController {
                 .map(item -> item.getAuthority())
                 .collect(Collectors.toList());
 
-        try {
-        	user = userService.getUserByName(loginRequestUserName);
-        }
-        catch (UserNotExistingException unee) {
-        	return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("This user does not exist");
-        }
-     
         // check whether account of user is still active
-        if (user.getUserState().isActive() == false) {
+        if (!userDetails.isAccountNonLocked()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Your account got suspended");
         }
 
         // update last login for authenticated user
-        userService.updateLastLogin(user);
+        try {
+            /*
+            we don't need to retrieve the user details again
+            because then the last login would always be displayed as the current login date and time
+             */
+            userService.updateLastLogin(userDetails.getId());
+        }
+        catch (UserNotExistingException unee){
+            return ResponseEntity.status((HttpStatus.NOT_FOUND)).body("This user does not exist");
+        }
 
         // send 200 OK and user data back to client
         return ResponseEntity.ok(new JwtResponse(jwt,
@@ -106,8 +106,8 @@ public class AuthController {
                 userDetails.getUsername(),
                 userDetails.getEmail(),
                 roles,
-                user.getUserState().getLastLogin(),
-                user.getUserState().isActive()
+                userDetails.getLastLogin(),
+                userDetails.isAccountNonLocked()
             )
         );
     }

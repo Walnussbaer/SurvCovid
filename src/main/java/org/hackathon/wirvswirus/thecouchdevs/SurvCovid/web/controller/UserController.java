@@ -11,13 +11,17 @@ import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.User;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.exception.NoActionRequiredException;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.exception.NoValidUserException;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.exception.UserNotExistingException;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.request.PasswordChangeRequest;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.request.UserUpdateRequest;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.response.UserControllerResponse;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.game.logic.service.UserService;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.web.security.SurvCovidUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -148,6 +152,7 @@ public class UserController {
 	 * 
 	 * @return an HTTP reponse with the updatet user or an error message if the operation was not successfull
 	 */
+	@PreAuthorize("hasRole('ADMIN')")
 	@RequestMapping(method = RequestMethod.PUT)
 	public ResponseEntity<UserControllerResponse> update(@RequestBody @Valid UserUpdateRequest userUpdate, BindingResult bindingResult) {
 		

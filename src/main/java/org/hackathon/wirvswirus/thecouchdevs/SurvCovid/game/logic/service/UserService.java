@@ -15,6 +15,9 @@ import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.exception.Use
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.request.UserUpdateRequest;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.entity.validation.UserValidator;
 import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.data.repository.UserRepository;
+import org.hackathon.wirvswirus.thecouchdevs.SurvCovid.web.controller.ProfileController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -31,6 +34,8 @@ public class UserService {
 	
 	@Autowired
 	private UserValidator userValidator;
+
+	private Logger logger = LoggerFactory.getLogger(UserService.class);
 	
 	@Autowired
 	public UserService(UserRepository userRepository) {
@@ -228,7 +233,35 @@ public class UserService {
 		System.out.println("User " + user.getUserName() + " has logged in successfully! Last login date is now: " + lastLogin + ", Account state is " + user.getUserState().isActive());
 
 		return lastLogin;
+	}
 
+	/**
+	 * Updates the date and time of the last login for the given user id.
+	 *
+	 * @param userId - the id of the user that has logged in
+	 * @return - the updated date and time for the new login
+	 */
+	public LocalDateTime updateLastLogin(long userId) throws UserNotExistingException {
+
+		LocalDateTime lastLogin;
+		Optional<User> optionalUser;
+		User user;
+
+		lastLogin = LocalDateTime.now();
+
+		optionalUser = this.userRepository.findById(userId);
+
+		if (optionalUser.isEmpty()){
+			throw new UserNotExistingException("There is no user with id " + userId);
+		}
+
+		user = optionalUser.get();
+		user.getUserState().setLastLogin(lastLogin);
+		userRepository.save(user);
+
+		System.out.println("User " + user.getUserName() + " has logged in successfully! Last login date is now: " + lastLogin + ", Account state is " + user.getUserState().isActive());
+
+		return lastLogin;
 	}
 
 	/**
@@ -243,7 +276,7 @@ public class UserService {
 		Optional<User> user = userRepository.findByUserName(userName);
 		
 		if (user.isEmpty()) {
-			throw new UserNotExistingException("There is not user with username " + userName);
+			throw new UserNotExistingException("There is no user with username " + userName);
 		}
 		
 		return user.get();
@@ -266,7 +299,16 @@ public class UserService {
 		
 		return user.get();		
 	}
-	
+
+	/**
+	 * Looks for a {@link User} with the given mail.
+	 *
+	 * @param mail the mail of the user to search for
+	 *
+	 * @return the user instance
+	 *
+	 * @throws UserNotExistingException if there is no user for the given mail
+	 */
 	public User getUserByMail(String mail) throws UserNotExistingException {
 		
 		Optional<User> user = this.userRepository.findByEmail(mail);
@@ -277,6 +319,32 @@ public class UserService {
 		
 		return user.get();
 		
+	}
+
+	/**
+	 * Changes the password for a user with the given id.
+	 * <p>
+	 * If no user is found for the given id, nothing happens.
+	 *
+	 * @param userId the id of the user to change the password for
+	 * @param newPassword the new password
+	 */
+	public void changePassword(long userId, String newPassword) {
+
+		Optional<User> optUser = this.userRepository.findById(userId);
+		User user;
+
+		if (optUser.isPresent()){
+
+			user = optUser.get();
+
+			user.setPassword(this.encoder.encode(newPassword));
+
+			this.userRepository.save(user);
+
+			this.logger.info("User " + user.getUserId() + " has successfully changed his/her password.");
+
+		}
 	}
 
 }
