@@ -161,8 +161,6 @@ public class UserController {
 		UserControllerResponse response = new UserControllerResponse();
 		
 		List<User> users = new ArrayList<User>();
-		
-		System.out.println("User State Object active field: " + userUpdate.getUserState().isActive());
 					
 		try {
 			userInDatbase = userService.updateUser(userUpdate, bindingResult);
@@ -175,8 +173,6 @@ public class UserController {
 		catch (UserNotExistingException e) {
 			response.setMessage("This is not a possible update!");
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-		} catch (NoActionRequiredException e) {
-			e.printStackTrace();
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);

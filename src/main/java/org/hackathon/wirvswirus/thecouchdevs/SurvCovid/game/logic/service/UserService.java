@@ -60,8 +60,20 @@ public class UserService {
 		
 		return user;
 	}
-	
-	public User updateUser(UserUpdateRequest userUpdate, BindingResult bindingResult) throws NoValidUserException, UserNotExistingException, JsonProcessingException, NoActionRequiredException {
+
+	/**
+	 * Updates a user in the database.
+	 *
+	 * @param userUpdate the object holding the update data
+	 * @param bindingResult the binding result of the controller
+	 *
+	 * @return always the updated user
+	 *
+	 * @throws NoValidUserException if the update is not valid
+	 * @throws UserNotExistingException if the indicated user by the udpate data is not present in the database
+	 * @throws JsonProcessingException if something wrent wrong during the processing of the http body
+	 */
+	public User updateUser(UserUpdateRequest userUpdate, BindingResult bindingResult) throws NoValidUserException, UserNotExistingException, JsonProcessingException {
 				
 		User existingUser;
 		User potentialUpdatedUser;

@@ -57,15 +57,22 @@ public class UserValidator {
 			throw new NoValidUserException(EMAIL_IN_USE);
 		}
 	}
-	
+
+	/**
+	 * Makes sure that given update data to a user are valid. Throws an exception, if not.
+	 *
+	 * @param potentialUpdatedUser the altered user object
+	 * @param userUpdate the object holding the new data
+	 * @param existingUser the existing user in the database, not changed yet
+	 * @param bindingResult the binding result of the controller
+	 *
+	 * @throws NoValidUserException gets throws if the update is not valid
+	 */
 	public void validateUserUpdate(User potentialUpdatedUser, UserUpdateRequest userUpdate, User existingUser, BindingResult bindingResult) throws NoValidUserException {
 		
 		if (bindingResult != null && bindingResult.hasErrors()){
 			throw new NoValidUserException(BINDING_FAILED);
 		}
-		
-		System.out.println("Updated user" + potentialUpdatedUser.getUserName());
-		System.out.println("Existing user:" + existingUser.getUserName());
 		
 		if (userUpdate.getUserName() != null 
 				&& !userUpdate.getUserName().isBlank() 
@@ -73,8 +80,6 @@ public class UserValidator {
 				&& userService.isExistingUserName(potentialUpdatedUser.getUserName())){
 			throw new NoValidUserException(USERNAME_IN_USE);
 		}
-		
-		System.out.println(userUpdate.getEmail().equals(existingUser.getUserName()));
 	
 		if (userUpdate.getEmail() != null 
 				&& !userUpdate.getEmail().isBlank() 
